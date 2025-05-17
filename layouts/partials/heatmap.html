@@ -1,0 +1,353 @@
+{{ $pages := where .Site.RegularPages "Date" ">" (now.AddDate -1 0 0) }}
+{{ $pagesJSON := slice }}
+{{ range $pages }}
+  {{ $pageData := dict "title" .Title "date" (.Date.Format "2006-01-02") "url" .RelPermalink "word_count" .WordCount }}
+  {{ $pagesJSON = $pagesJSON | append $pageData }}
+{{ end }}
+
+<div id="heatmap" data-blog-info="{{ $pagesJSON | jsonify }}"></div>
+
+<script type="text/javascript">
+  // 从DOM元素中读取预处理的数据
+  var heatmapEl = document.getElementById('heatmap');
+  var blogInfo = { pages: JSON.parse(heatmapEl.getAttribute('data-blog-info')) };
+  
+  var weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+
+  function getStartDate() {
+    const numWeeksToShow = 34; // 显示的周数
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const dayOfWeek = today.getDay();
+    const daysSinceMonday = (dayOfWeek === 0 ? 6 : dayOfWeek - 1);
+    const daysToLastMonday = daysSinceMonday + ((numWeeksToShow - 1) * 7);
+    let startDate = new Date(today.setDate(today.getDate() - daysToLastMonday));
+
+    return startDate;
+  }
+
+  function createDay(date, title, count) {
+    const day = document.createElement("div");
+    day.className = "heatmap_day";
+    day.setAttribute("data-title", title);
+    day.setAttribute("data-count", count);
+    day.setAttribute("data-date", date);
+
+    // 只有当文章计数大于0时才添加提示框功能和点击事件
+    if (parseInt(count, 10) > 0) {
+      let tooltip;
+      
+      // 查找该日期的所有文章
+      const articlesForDay = blogInfo.pages.filter(page => page.date === date);
+      
+      // 如果只有一篇文章，添加点击直接跳转功能
+      if (articlesForDay.length === 1) {
+        day.style.cursor = 'pointer';
+        day.addEventListener('click', () => {
+          window.location.href = articlesForDay[0].url;
+        });
+      }
+
+      const generateTooltipContent = () => {
+        const dayDate = new Date(date);
+        const weekDay = weekDays[dayDate.getDay()];
+        let content = `<div>${date} ${weekDay}</div>`;
+        
+        // 如果有文章，为每篇文章创建可点击链接
+        if (articlesForDay.length > 0) {
+          content += '<div class="heatmap_tooltip_title">';
+          
+          articlesForDay.forEach(article => {
+            content += `<div class="tooltip_article"><a href="${article.url}">${article.title}</a></div>`;
+          });
+          
+          content += '</div>';
+        }
+        
+        return content;
+      };
+
+      const showTooltip = () => {
+        if (!tooltip) {
+          tooltip = document.createElement("div");
+          tooltip.className = "heatmap_tooltip";
+          tooltip.innerHTML = generateTooltipContent();
+          document.body.appendChild(tooltip);
+
+          const rect = day.getBoundingClientRect();
+          tooltip.style.left = `${rect.left + window.scrollX + rect.width / 2}px`;
+          tooltip.style.top = `${rect.top + window.scrollY - tooltip.offsetHeight - 2}px`;
+
+          tooltip.addEventListener("mouseenter", () => {
+            tooltip.style.opacity = "1";
+          });
+          tooltip.addEventListener("mouseleave", hideTooltip);
+        }
+        tooltip.style.opacity = "1";
+      };
+
+      const hideTooltip = () => {
+        if (tooltip) {
+          tooltip.style.opacity = "0";
+          setTimeout(() => {
+            if (tooltip) {
+              document.body.removeChild(tooltip);
+              tooltip = null;
+            }
+          }, 300);
+        }
+      };
+
+      day.addEventListener("mouseenter", showTooltip);
+      day.addEventListener("mouseleave", () => {
+        setTimeout(() => {
+          if (tooltip && !tooltip.matches(':hover')) {
+            hideTooltip();
+          }
+        }, 100);
+      });
+
+      if (count > 0) {
+        day.classList.add("heatmap_day_has_post");
+      } else {
+        day.classList.add("heatmap_day_no_post");
+      }
+    }
+
+    // 简化为两种状态：有文章或无文章
+    if (count > 0) {
+      day.classList.add("heatmap_day_has_post");
+    } else {
+      day.classList.add("heatmap_day_no_post");
+    }
+
+    return day;
+  }
+
+  function createHeatmap() {
+    const container = document.getElementById('heatmap');
+    if (!container) return;
+
+    // 添加左侧星期标记
+    const weekLabelsContainer = document.createElement('div');
+    weekLabelsContainer.className = 'heatmap_week_labels';
+    
+    // 添加星期标签 - 使用完整的中文日期标签
+    const labels = ['日', '一', '二', '三', '四', '五', '六'];
+    for (let i = 0; i < 7; i++) {
+      const weekLabel = document.createElement('div');
+      weekLabel.className = 'heatmap_week_label';
+      weekLabel.textContent = labels[i]; // 使用中文字符作为标签
+      weekLabelsContainer.appendChild(weekLabel);
+    }
+    
+    // 添加星期标签容器到主容器前
+    const heatmapWrapper = document.createElement('div');
+    heatmapWrapper.className = 'heatmap_wrapper';
+    container.appendChild(heatmapWrapper);
+    
+    heatmapWrapper.appendChild(weekLabelsContainer);
+    
+    // 创建热图容器
+    const heatmapDaysContainer = document.createElement('div');
+    heatmapDaysContainer.className = 'heatmap_days_container';
+    heatmapWrapper.appendChild(heatmapDaysContainer);
+
+    const startDate = getStartDate();
+    const endDate = new Date();
+    endDate.setHours(23, 59, 59, 999);
+
+    let currentDate = new Date(startDate.getTime());
+    let currentWeek = document.createElement('div');
+    currentWeek.className = 'heatmap_week';
+    heatmapDaysContainer.appendChild(currentWeek);
+
+    let daysCount = 0;
+
+    while (currentDate <= endDate) {
+      if (daysCount % 7 === 0 && daysCount !== 0) {
+        currentWeek = document.createElement('div');
+        currentWeek.className = 'heatmap_week';
+        heatmapDaysContainer.appendChild(currentWeek);
+      }
+
+      const dateString = `${currentDate.getFullYear()}-${("0" + (currentDate.getMonth()+1)).slice(-2)}-${("0" + currentDate.getDate()).slice(-2)}`;
+      const articleDataList = blogInfo.pages.filter(page => page.date === dateString);
+
+      if (articleDataList.length > 0) {
+        const titles = articleDataList.map(data => data.title).join('<br>');
+        const count = articleDataList.length; // 使用文章数量而非字数
+        const dayElem = createDay(dateString, titles, count);
+        currentWeek.appendChild(dayElem);
+      } else {
+        const dayElem = createDay(dateString, '', 0);
+        currentWeek.appendChild(dayElem);
+      }
+
+      currentDate.setDate(currentDate.getDate() + 1);
+      daysCount++;
+    }
+  }
+
+  // 延迟执行以确保DOM已加载
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', createHeatmap);
+  } else {
+    createHeatmap();
+  }
+</script>
+
+<style>
+/* 热图样式 */
+.heatmap_wrapper {
+  display: flex;
+  margin: 20px auto;
+  max-width: 100%;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.heatmap_week_labels {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-right: 8px;
+  height: 100%;
+}
+
+.heatmap_week_label {
+  width: 15px;
+  height: 15px;
+  font-size: 12px;
+  color: #909090;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.heatmap_days_container {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 4px;
+  overflow-x: auto;
+  padding-bottom: 15px;
+  max-width: calc(100% - 30px);
+}
+
+#heatmap {
+  display: flex;
+  justify-content: center;
+  max-width: 100%;
+  width: 100%;
+}
+
+.heatmap_week {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.heatmap_day {
+  width: 15px;
+  height: 15px;
+  border-radius: 3px;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.2s ease;
+}
+
+.heatmap_day_has_post {
+  background-color: var(--vscode-accent);
+  cursor: pointer;
+}
+
+.heatmap_day_has_post:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+/* 简化为两种状态 */
+.heatmap_day_no_post {
+  background-color: var(--vscode-sidebar);
+}
+
+.heatmap_tooltip {
+  position: absolute;
+  background-color: var(--vscode-sidebar);
+  color: var(--vscode-text);
+  border: 1px solid var(--vscode-border);
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 13px;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transform: translateX(-50%);
+  /*transition: opacity 0.2s, transform 0.1s;*/
+  max-width: 280px;
+  pointer-events: auto;
+}
+
+.heatmap_tooltip_title {
+  margin-top: 6px;
+  font-weight: bold;
+  line-height: 1.4;
+}
+
+.tooltip_article {
+  margin: 4px 0;
+}
+
+.tooltip_article a {
+  color: var(--vscode-accent);
+  text-decoration: none;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tooltip_article a:hover {
+  text-decoration: underline;
+}
+
+/* 响应式适配 */
+@media (max-width: 768px) {
+  .heatmap_days_container {
+    justify-content: flex-start;
+    padding-bottom: 10px;
+  }
+  
+  .heatmap_day {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .heatmap_week_label {
+    height: 12px;
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .heatmap_day {
+    width: 10px;
+    height: 10px;
+  }
+  
+  .heatmap_days_container,
+  .heatmap_week {
+    gap: 3px;
+  }
+  
+  .heatmap_week_label {
+    height: 10px;
+    font-size: 9px;
+  }
+  
+  .heatmap_week_labels {
+    gap: 3px;
+    margin-right: 5px;
+  }
+}
+</style>

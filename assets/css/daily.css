@@ -1,0 +1,264 @@
+/* Daily页面样式 - 简洁风格 */
+.daily-header {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  padding: 10px 15px;
+  background: var(--vscode-sidebar);
+  border-left: 3px solid var(--vscode-accent);
+  border-radius: 0 3px 3px 0;
+}
+
+.daily-header h1 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 1.5em;
+  font-weight: 600;
+  color: var(--vscode-text);
+}
+
+.daily-header i {
+  color: var(--vscode-accent);
+}
+
+.daily-count {
+  font-size: 0.9em;
+  color: #858585;
+  margin: 5px 0 0 0;
+}
+
+.daily-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: 15px;
+}
+
+.daily-card {
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  border-bottom: 1px solid #d6d6d6;
+  overflow: hidden;
+  padding: 15px 0;
+  transition: background-color 0.2s ease;
+}
+
+.daily-card:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.daily-card-header {
+  display: flex;
+  align-items: flex-start;
+  padding: 0 0 10px 0;
+  border-bottom: none;
+}
+
+.daily-avatar {
+  flex-shrink: 0;
+  margin-right: 12px;
+}
+
+.daily-avatar img {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  object-fit: cover;
+  border: none;
+}
+
+.daily-card-info {
+  flex: 1;
+}
+
+.daily-title {
+  margin: 0 0 5px 0;
+  font-size: 1.1em;
+  font-weight: 600;
+  color: var(--vscode-text);
+  line-height: 1.3;
+}
+
+.daily-date {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.85em;
+  color: #999;
+}
+
+.daily-date i {
+  color: var(--vscode-accent);
+  opacity: 0.8;
+}
+
+.daily-content {
+  padding: 5px 0 10px 0;
+  color: var(--vscode-text);
+  font-size: 0.95em;
+  line-height: 1.6;
+  margin-left: calc(3rem + 12px);
+}
+
+.daily-content p {
+  margin: 0 0 15px 0;
+}
+
+.daily-content p:last-child {
+  margin-bottom: 0;
+}
+
+.daily-content img {
+  max-width: 600px;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 10px 0;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.daily-content img:hover {
+  transform: scale(1.01);
+}
+
+.daily-content pre, .daily-content code {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 5px;
+  font-family: 'Cascadia Code', 'Fira Code', monospace;
+  font-size: 0.9em;
+  padding: 2px 5px;
+}
+
+.daily-content pre {
+  padding: 10px;
+  padding-inline-start: 3rem;
+  overflow-x: auto;
+}
+
+.daily-content pre code {
+  background: none;
+  padding: 0;
+}
+
+.daily-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0 0 5px 0;
+  margin-left: calc(3rem + 12px);
+}
+
+.daily-tag {
+  font-size: 0.7em;
+  padding: 0.25em 0.6em;
+  border-radius: 0.5rem;
+  background-color: transparent;
+  color: rgb(209,59,88);
+  text-decoration: none;
+  border: 1px solid;
+  transition: background-color 0.2s ease;
+  line-height: 1;
+}
+
+.daily-tag:hover {
+  background-color: rgba(209,59,88,0.05);
+}
+
+/* 加载更多按钮 */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  margin: 25px 0;
+}
+
+#loadMore {
+  padding: 5px 15px;
+  background: transparent;
+  color: rgb(209,59,88);
+  border: 1px solid rgb(209,59,88);
+  border-radius: 0.5rem;
+  font-size: 0.9em;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+#loadMore:hover {
+  transform: scale(1.05);
+}
+
+#loadMore:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .daily-content {
+    margin-left: calc(2.5rem + 10px);
+  }
+  
+  .daily-tags {
+    margin-left: calc(2.5rem + 10px);
+  }
+  
+  .daily-content img {
+    max-width: 100%;
+  }
+  
+  .daily-avatar img {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+  
+  .daily-content pre,
+  .daily-content code {
+    width: 100%;
+    margin-left: 0;
+    padding: 8px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .daily-header h1 {
+    font-size: 1.3em;
+  }
+  
+  .daily-content {
+    font-size: 0.9em;
+    margin-left: calc(2.2rem + 10px);
+  }
+  
+  .daily-tags {
+    margin-left: calc(2.2rem + 10px);
+  }
+  
+  .daily-avatar img {
+    width: 2.2rem;
+    height: 2.2rem;
+  }
+  
+  .daily-title {
+    font-size: 1em;
+  }
+}
+
+/* 归档月份的折叠/展开 */
+.archive-month .archive-posts {
+  display: none;
+  padding-left: 20px;
+  margin-top: 4px;
+}
+
+.archive-month.active .archive-posts {
+  display: block;
+}
+
+.archive-month .folder {
+  cursor: pointer;
+}
+
+/* 添加JavaScript支持以实现折叠/展开功能 */

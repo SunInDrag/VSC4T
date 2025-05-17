@@ -1,0 +1,114 @@
+{{ define "main" }}
+{{ partial "header.html" . }}
+
+<div class="vscode-container">
+  <!-- 左側資源管理器 -->
+  <div class="sidebar-explorer">
+    <div class="explorer-section">
+      <div class="section-header">
+        <i class="fas fa-clock"></i>
+        <span>ARCHIVES</span>
+      </div>
+      <div class="section-content">
+        {{ $pages := where .Site.RegularPages "Type" "in" .Site.Params.mainSections }}
+        {{ range $pages.GroupByDate "2006" }}
+          <div class="archive-year">
+            <div class="folder">
+              <i class="fas fa-folder"></i>
+              <span>{{ .Key }}</span>
+              <span class="count">({{ len .Pages }})</span>
+            </div>
+            <div class="archive-posts">
+              {{ range .Pages }}
+                <div class="file">
+                  <i class="fas fa-file-alt"></i>
+                  <a href="{{ .RelPermalink }}">
+                    {{ .Date.Format "01-02" }} {{ .Title }}
+                  </a>
+                </div>
+              {{ end }}
+            </div>
+          </div>
+        {{ end }}
+      </div>
+    </div>
+  </div>
+
+  <!-- 主要內容區域 -->
+  <div class="editor-content">
+    <div class="tab-bar">
+      <div class="tab active">
+        <i class="fas fa-archive"></i>
+        <span>archives.md</span>
+      </div>
+    </div>
+    
+    <div class="content-area">
+      <div class="archive-header">
+        <h1>
+          <i class="fas fa-archive"></i>
+          Archives
+        </h1>
+  <!--        <span class="archive-count">{{ len (where .Site.RegularPages "Type" "in" .Site.Params.mainSections) }} posts</span> -->
+		{{$scratch := newScratch}}
+		{{$totalWord := 0}}
+		{{ range (where .Site.Pages "Kind" "page" )}}
+			{{$scratch.Add "total" .WordCount}}
+		{{ end }}
+		{{$totalWord = $scratch.Get "total" }}
+		共 {{ len (where .Site.RegularPages "Section" "posts") }} 篇文章， 總計 {{$totalWord}} 字
+      </div>
+      {{ partial "heatmap.html" . }}
+      <div class="timeline-container">
+        {{ $pages := where .Site.RegularPages "Type" "in" .Site.Params.mainSections }}
+        {{ range $pages.GroupByDate "2006" }}
+          <div class="timeline-year">
+            <div class="year-header">
+              <i class="fas fa-calendar-alt"></i>
+              {{ .Key }}
+              <span class="year-count">({{ len .Pages }} posts)</span>
+            </div>
+            <div class="year-posts">
+              {{ range .Pages }}
+                <div class="timeline-post">
+                  <div class="post-date">
+                    <i class="fas fa-clock"></i>
+                    {{ .Date.Format "01-02" }}
+                  </div>
+                  <div class="post-info">
+                    <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+                    <div class="post-meta">
+                      {{ if .Params.categories }}
+                        <span class="category">
+                          <i class="fas fa-folder"></i>
+                          {{ if reflect.IsSlice .Params.categories }}
+                            {{ range $index, $category := .Params.categories }}
+                              {{ if $index }}, {{ end }}
+                              <a href="{{ "categories/" | relURL }}{{ $category | urlize }}">{{ $category }}</a>
+                            {{ end }}
+                          {{ else }}
+                            <a href="{{ "categories/" | relURL }}{{ .Params.categories | urlize }}">{{ .Params.categories }}</a>
+                          {{ end }}
+                        </span>
+                      {{ end }}
+                      {{ if .Params.tags }}
+                        <span class="tags">
+                          <i class="fas fa-tags"></i>
+                          {{ range $index, $tag := .Params.tags }}
+                            {{ if $index }}, {{ end }}
+                            <a href="{{ "tags/" | relURL }}{{ $tag | urlize }}">{{ $tag }}</a>
+                          {{ end }}
+                        </span>
+                      {{ end }}
+                    </div>
+                  </div>
+                </div>
+              {{ end }}
+            </div>
+          </div>
+        {{ end }}
+      </div>
+    </div>
+  </div>
+</div>
+{{ end }} 

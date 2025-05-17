@@ -1,0 +1,52 @@
+{{ $pag := $.Paginator }}
+{{ if gt $pag.TotalPages 1 }}
+<ul class="pagination">
+  {{ with $pag.First }}
+  <li>
+    <a href="{{ .URL }}" class="page-btn" aria-label="First"><i class="fas fa-angle-double-left"></i></a>
+  </li>
+  {{ end }}
+  
+  {{ with $pag.Prev }}
+  <li>
+    <a href="{{ .URL }}" class="page-btn prev" aria-label="Previous"><i class="fas fa-angle-left"></i></a>
+  </li>
+  {{ end }}
+  
+  {{ $ellipsed := false }}
+  {{ $shouldEllipse := false }}
+  {{ range $pag.Pagers }}
+    {{ $right := sub .TotalPages .PageNumber }}
+    {{ $showNumber := or (le .PageNumber 3) (eq .PageNumber $pag.TotalPages) (eq .PageNumber $pag.PageNumber) (le $right 2) }}
+    {{ if $showNumber }}
+      {{ $ellipsed = false }}
+      {{ $shouldEllipse = false }}
+    {{ else }}
+      {{ $shouldEllipse = not $ellipsed }}
+      {{ $ellipsed = true }}
+    {{ end }}
+    
+    {{ if $showNumber }}
+    <li>
+      <a href="{{ .URL }}" class="page-btn{{ if eq . $pag }} current{{ end }}">{{ .PageNumber }}</a>
+    </li>
+    {{ else if $shouldEllipse }}
+    <li>
+      <span class="page-btn dots">&hellip;</span>
+    </li>
+    {{ end }}
+  {{ end }}
+  
+  {{ with $pag.Next }}
+  <li>
+    <a href="{{ .URL }}" class="page-btn next" aria-label="Next"><i class="fas fa-angle-right"></i></a>
+  </li>
+  {{ end }}
+  
+  {{ with $pag.Last }}
+  <li>
+    <a href="{{ .URL }}" class="page-btn" aria-label="Last"><i class="fas fa-angle-double-right"></i></a>
+  </li>
+  {{ end }}
+</ul>
+{{ end }} 

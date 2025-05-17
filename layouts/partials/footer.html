@@ -1,0 +1,24 @@
+<footer class="footer">
+  <div class="status-bar">
+    <div class="status-item">
+      <i class="fas fa-code-branch"></i>
+      master
+    </div>
+    <div class="status-item">
+      <i class="fas fa-sync"></i>
+      {{ .Site.Params.author }}
+    </div>
+    <div class="status-item">
+      <i class="fas fa-clock"></i>
+      {{ now.Format "2006-01-02" }}
+    </div>
+    <div class="status-item">
+      Designed By&nbsp; <a href="https://github.com/B143KC47" target="_blank"> BlackCat</a>
+    </div>
+    <div class="status-item github">
+      <a href="{{ .Site.Params.social.github | default "#" }}" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+    </div>
+  </div>
+</footer> 

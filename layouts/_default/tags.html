@@ -1,0 +1,89 @@
+{{ define "main" }}
+{{ partial "header.html" . }}
+
+<!-- Group tags by first letter -->
+{{ $tags := $.Site.Taxonomies.tags.ByCount }}
+{{ $grouped := dict }}
+
+{{ range $key, $value := $tags }}
+  {{ $firstLetter := upper (substr $value.Name 0 1) }}
+  {{ $isAlpha := findRE "[A-Z]" $firstLetter 1 }}
+  {{ if eq (len $isAlpha) 0 }}
+    {{ $firstLetter = "#" }}
+  {{ end }}
+  
+  {{ $letterTags := index $grouped $firstLetter | default slice }}
+  {{ $grouped = merge $grouped (dict $firstLetter (append $letterTags $value)) }}
+{{ end }}
+
+<!-- Sort the letters, with # at the end -->
+{{ $sortedKeys := slice }}
+{{ range $letter, $_ := $grouped }}
+  {{ if ne $letter "#" }}
+    {{ $sortedKeys = $sortedKeys | append $letter }}
+  {{ end }}
+{{ end }}
+{{ $sortedKeys = sort $sortedKeys }}
+{{ if isset $grouped "#" }}
+  {{ $sortedKeys = $sortedKeys | append "#" }}
+{{ end }}
+
+<div class="vscode-container">
+  <div class="sidebar-explorer">
+    <div class="explorer-section">
+      <div class="section-header">
+        <i class="fas fa-tags"></i>
+        <span>ALL TAGS</span>
+      </div>
+      <div class="section-content tag-sidebar-list">
+        {{ range $sortedKeys }}
+          {{ $letter := . }}
+          <div class="tag-group-sidebar">
+            <div class="tag-group-header-sidebar">{{ $letter }}</div>
+            {{ range (index $grouped $letter) }}
+              <a class="tag-item" href="{{ "tags/" | relURL }}{{ .Name | urlize }}">
+                <i class="fas fa-tag"></i>
+                <span>{{ .Name }}</span>
+                <span class="count">{{ .Count }}</span>
+              </a>
+            {{ end }}
+          </div>
+        {{ end }}
+      </div>
+    </div>
+  </div>
+  
+  <div class="editor-content">
+    <div class="tab-bar">
+      <div class="tab active">
+        <i class="fas fa-tags"></i>
+        <span>tags.md</span>
+        <span class="tab-count">{{ len $tags }}</span>
+      </div>
+    </div>
+    
+    <div class="content-area">
+      <div class="tags-overview">
+        <h1><i class="fas fa-tags"></i> All Tags</h1>
+        <div class="tags-cloud">
+          {{ range $sortedKeys }}
+            {{ $letter := . }}
+            <div class="tag-group">
+              <h2 class="tag-group-header">{{ $letter }}</h2>
+              <div class="tag-group-list">
+                {{ range (index $grouped $letter) }}
+                  <a class="tag-link" href="{{ "tags/" | relURL }}{{ .Name | urlize }}">
+                    <i class="fas fa-tag"></i>
+                    {{ .Name }}
+                    <span class="count">{{ .Count }}</span>
+                  </a>
+                {{ end }}
+              </div>
+            </div>
+          {{ end }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{{ end }} 

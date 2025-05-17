@@ -1,0 +1,260 @@
+/* Styles for grouped tags page */
+
+/* Main Content Area Grouping */
+.tag-group {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background-color: var(--vscode-sidebar); /* Use sidebar background for contrast */
+  border: 1px solid var(--vscode-active);
+  border-radius: 4px;
+}
+
+.tag-group-header {
+  font-size: 1.4em;
+  color: var(--vscode-accent); /* Use accent color for the letter */
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--vscode-border);
+}
+
+.tag-group-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem; /* Spacing between tag links */
+}
+
+/* Individual tag link style in the main area (already defined in tags-overview .tag-link) */
+.tags-overview .tag-link {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--vscode-active);
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  text-decoration: none;
+  color: var(--vscode-text);
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.tags-overview .tag-link:hover {
+  background-color: var(--vscode-highlight);
+  transform: translateY(-1px);
+}
+
+.tags-overview .tag-link i {
+  margin-right: 0.4rem;
+  color: #c2975b; /* Keep original icon color */
+}
+
+.tags-overview .tag-link .count {
+  margin-left: 0.5rem;
+  font-size: 0.8em;
+  color: #808080;
+  background-color: var(--vscode-sidebar); /* Slightly different background for count */
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+}
+
+
+/* Sidebar Grouping */
+.tag-sidebar-list {
+  padding-left: 10px; /* Indent the whole list slightly */
+}
+
+.tag-group-sidebar {
+  margin-bottom: 0.8rem;
+}
+
+.tag-group-header-sidebar {
+  font-weight: bold;
+  color: var(--vscode-accent-light); /* Lighter accent for sidebar header */
+  margin-bottom: 0.4rem;
+  padding-left: 5px; /* Align with tag items */
+  font-size: 0.95em;
+}
+
+/* Sidebar tag item style (already defined as .tag-item) */
+.tag-item {
+  padding: 3px 8px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  font-family: var(--font-family);
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.tag-item a {
+  color: var(--vscode-text);
+  text-decoration: none;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0; /* 允許文字區域縮小 */
+  display: block;
+  position: relative;
+  z-index: 2;
+}
+
+.tag-item:hover {
+  background: var(--vscode-active);
+}
+
+.tag-item:hover a {
+  color: var(--vscode-accent);
+}
+
+.tag-item i {
+  color: #c2975b;
+  font-size: 12px;
+  min-width: 14px;
+  text-align: center;
+}
+
+.tag-item .count {
+  color: #808080;
+  font-size: 11px;
+  width: min-content; /* 固定寬度，避免擠壓 */
+  text-align: right;
+  flex-shrink: 0; /* 防止縮小 */
+  margin-left: 5px;
+}
+
+/* 活動標籤樣式 */
+.tag-item.active {
+  background: var(--vscode-active);
+  border-left: 2px solid var(--vscode-accent);
+  padding-left: 6px;
+}
+
+.tag-item.active a {
+  color: #fdf6e3; /* Solarized Base3 - 更亮的文本颜色 */
+}
+
+/* 標籤頁面樣式 */
+.tag-header {
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--vscode-border);
+  padding-bottom: 10px;
+  color: var(--vscode-text);
+}
+
+.tag-header h1 {
+  font-size: 24px;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--vscode-accent);
+}
+
+.tag-header h1 i {
+  color: #268bd2; /* Solarized Blue */
+}
+
+.tag-count {
+  font-size: 14px;
+  color: #808080;
+}
+
+/* 標籤列表樣式 */
+.tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.tag-item-post {
+  padding: 2px 8px;
+  font-size: 12px;
+  border-radius: 3px;
+  background: var(--vscode-sidebar);
+  color: var(--vscode-text);
+  text-decoration: none;
+}
+
+.tag-item-post:hover {
+  background: var(--vscode-active);
+  color: #fdf6e3; /* Solarized Base3 */
+}
+
+/* 標籤術語頁面樣式 */
+.terms-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.term-item {
+  background: var(--vscode-sidebar);
+  border-radius: 4px;
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.term-item:hover {
+  background: var(--vscode-active);
+  transform: translateY(-2px);
+}
+
+.term-item i {
+  color: var(--vscode-accent);
+  font-size: 14px;
+}
+
+.term-item a {
+  color: var(--vscode-text);
+  text-decoration: none;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0; /* 允許文字區域縮小 */
+}
+
+.term-item:hover a {
+  color: #fdf6e3; /* Solarized Base3 */
+}
+
+.term-item .count {
+  color: #808080;
+  font-size: 11px;
+  width: 34px; /* 固定寬度，避免擠壓 */
+  text-align: right;
+  flex-shrink: 0; /* 防止縮小 */
+}
+
+/* 響應式調整 */
+@media (max-width: 768px) {
+  .terms-list {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+  
+  .term-item {
+    padding: 8px 12px;
+  }
+}
+
+/* Responsive adjustments if needed */
+@media (max-width: 768px) {
+  .tag-group {
+    padding: 0.8rem;
+  }
+  .tag-group-header {
+    font-size: 1.2em;
+  }
+  .tags-overview .tag-link {
+    font-size: 0.85rem;
+    padding: 0.3rem 0.6rem;
+  }
+}

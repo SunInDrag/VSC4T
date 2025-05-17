@@ -1,0 +1,87 @@
+<!-- 這裡可以放置自定義腳本 -->
+<script>
+document.addEventListener('DOMContentLoaded', (event) => {
+  // Apply smooth scroll to non-TOC anchor links
+  document.querySelectorAll('a[href^="#"]:not(.toc-link)').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      // Check if querySelector is valid before using it
+      try {
+        const targetSelector = this.getAttribute('href');
+        // Basic check for potentially invalid selectors (though not exhaustive)
+        if (targetSelector && targetSelector.length > 1) { 
+          const targetElement = document.querySelector(targetSelector);
+          if (targetElement) {
+            targetElement.scrollIntoView({
+              behavior: 'smooth'
+            });
+          } else {
+            console.warn('Smooth scroll target not found:', targetSelector);
+          }
+        } else {
+           console.warn('Invalid href for smooth scroll:', targetSelector);
+        }
+      } catch (error) {
+        console.error('Error during smooth scroll:', error, 'Selector:', this.getAttribute('href'));
+        // Fallback or alternative behavior if needed
+        // For example, try getElementById if it's just an ID
+        const targetId = this.getAttribute('href').slice(1);
+        try {
+            const targetElementById = document.getElementById(decodeURIComponent(targetId));
+            if (targetElementById) {
+                targetElementById.scrollIntoView({ behavior: 'smooth' });
+            }
+        } catch (idError) {
+             console.error('Fallback getElementById also failed:', idError);
+        }
+      }
+    });
+  });
+});
+</script>
+<script src="{{ "js/toc.js" | relURL }}"></script>
+
+<!-- Scripts -->
+<script>
+  // 將語言文件中的翻譯傳遞給前端
+  window.HUGO_CONFIG = {
+    language: {{ .Site.Language.Lang | default "en" | jsonify }},
+    search_placeholder: {{ i18n "search_placeholder" | default "Search..." | jsonify }},
+    search_no_results: {{ i18n "search_no_results" | default "No results found" | jsonify }},
+    search_result: {{ i18n "search_result" | default "result" | jsonify }},
+    search_results: {{ i18n "search_results" | default "results" | jsonify }},
+    search_results_found: {{ i18n "search_results_found" | default "results found" | jsonify }},
+    search_in: {{ i18n "search_in" | default "Search in" | jsonify }},
+    search_in_title: {{ i18n "search_in_title" | default "Title" | jsonify }},
+    search_in_content: {{ i18n "search_in_content" | default "Content" | jsonify }},
+    search_in_tags: {{ i18n "search_in_tags" | default "Tags" | jsonify }},
+    search_in_categories: {{ i18n "search_in_categories" | default "Categories" | jsonify }},
+    search_filters: {{ i18n "search_filters" | default "Filters" | jsonify }},
+    search_recent: {{ i18n "search_recent" | default "Recent Searches" | jsonify }},
+    search_clear: {{ i18n "search_clear" | default "Clear" | jsonify }},
+    search_loading: {{ i18n "search_loading" | default "Loading..." | jsonify }},
+    search_error: {{ i18n "search_error" | default "Error" | jsonify }}
+  };
+</script>
+
+{{ range .Site.Params.custom_js }}
+<script src="{{ . | relURL }}"></script>
+{{ end }}
+
+<!-- 添加所有需要的腳本 -->
+<script src="{{ "js/main.js" | relURL }}"></script>
+<script src="{{ "js/search.js" | relURL }}"></script>
+{{ if eq .Layout "categories" }}
+<script src="{{ "js/categories-toggle.js" | relURL }}"></script>
+{{ end }}
+
+<!-- 側邊欄事件處理 -->
+<script src="{{ "js/explorer.js" | relURL }}"></script>
+<!-- 初始化側邊欄 -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  if (document.querySelector('.sidebar-explorer') && typeof initExplorerEvents === 'function') {
+    initExplorerEvents();
+  }
+});
+</script> 

@@ -1,0 +1,79 @@
+{{ define "main" }}
+{{ partial "header.html" . }}
+
+<div class="vscode-container">
+  <!-- 左側資源管理器 -->
+  <div class="sidebar-explorer">
+    <div class="explorer-section">
+      <div class="section-header">
+        <i class="fas fa-folder-open"></i>
+        <span>CATEGORIES</span>
+      </div>
+      <div class="section-content">
+        {{ range $name, $taxonomy := .Site.Taxonomies.categories }}
+          <a class="category-item" href="{{ "categories/" | relURL }}{{ $name | urlize }}">
+            <i class="fas fa-folder"></i>
+            <span>{{ $name }}</span>
+            <span class="count">({{ len $taxonomy.Pages }})</span>
+          </a>
+        {{ end }}
+      </div>
+    </div>
+  </div>
+
+  <!-- 主要內容區域 -->
+  <div class="editor-content">
+    <div class="tab-bar">
+      <div class="tab active">
+        <i class="fas fa-folder-open"></i>
+        <span>categories.md</span>
+      </div>
+    </div>
+    
+    <div class="content-area">
+      <div class="categories-overview">
+        {{ range $name, $taxonomy := .Site.Taxonomies.categories }}
+          <div class="category-section">
+            <div class="category-header collapsed">
+              <i class="fas fa-folder"></i>
+              <a href="{{ "categories/" | relURL }}{{ $name | urlize }}" class="category-link">
+                <h2>{{ $name }}</h2>
+              </a>
+              <span class="count">{{ len $taxonomy.Pages }} posts</span>
+              <i class="fas fa-chevron-down toggle-icon"></i>
+            </div>
+            <div class="category-posts collapsed">
+              {{ range $taxonomy.Pages.ByDate.Reverse }}
+                <div class="post-item">
+                  <i class="fas fa-file-alt"></i>
+                  <div class="post-info">
+                    <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+                    <span class="date">
+                      <i class="fas fa-calendar-alt"></i>
+                      {{ .Date.Format "2006-01-02" }}
+                    </span>
+                  </div>
+                </div>
+              {{ end }}
+            </div>
+          </div>
+        {{ end }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // 添加分類切換功能
+    document.querySelectorAll('.category-header').forEach(header => {
+      header.addEventListener('click', function(e) {
+        if (e.target.tagName !== 'A') {
+          this.classList.toggle('collapsed');
+          this.nextElementSibling.classList.toggle('collapsed');
+        }
+      });
+    });
+  });
+</script>
+{{ end }} 

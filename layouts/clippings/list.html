@@ -1,0 +1,113 @@
+{{ define "main" }}
+{{ partial "header.html" . }}
+
+<div class="vscode-container">
+  <!-- 左側資源管理器 -->
+  <div class="sidebar-explorer">
+    <div class="explorer-section">
+      <div class="section-header">
+        <i class="fas fa-cut"></i>
+        <span>剪藏文章</span>
+      </div>
+      <div class="section-content">
+        {{ range where .Site.RegularPages "Section" "clippings" }}
+          <div class="file">
+            <i class="fas fa-file-alt"></i>
+            <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+          </div>
+        {{ end }}
+      </div>
+    </div>
+  </div>
+
+  <!-- 主要內容區域 -->
+  <div class="editor-content">
+    <div class="tab-bar">
+      <div class="tab active">
+        <i class="fas fa-cut"></i>
+        <span>剪藏.md</span>
+      </div>
+    </div>
+    
+    <div class="content-area">
+      <div class="section-header-content">
+        <h1>
+          <i class="fas fa-cut"></i>
+          剪藏文章
+        </h1>
+        <div class="section-description">
+          {{ .Content }}
+        </div>
+      </div>
+
+      <div class="posts-container">
+        {{ $paginator := .Paginate (where .Site.RegularPages "Section" "clippings") }}
+        {{ range $paginator.Pages }}
+          <div class="post-card">
+            <div class="post-header">
+              <i class="fas fa-file-alt"></i>
+              <span class="post-title">
+                <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+              </span>
+            </div>
+            
+            <div class="post-meta">
+              <span class="date">
+                <i class="fas fa-calendar-alt"></i>
+                {{ .Date.Format "2006-01-02" }}
+              </span>
+              {{ if .Params.categories }}
+                <span class="category">
+                  <i class="fas fa-folder"></i>
+                  {{ if reflect.IsSlice .Params.categories }}
+                    {{ range $index, $category := .Params.categories }}
+                      {{ if $index }} {{ end }}
+                      <a href="{{ "categories/" | relURL }}{{ $category | urlize }}">{{ $category }}</a>
+                    {{ end }}
+                  {{ else }}
+                    <a href="{{ "categories/" | relURL }}{{ .Params.categories | urlize }}">{{ .Params.categories }}</a>
+                  {{ end }}
+                </span>
+              {{ end }}
+              {{ if .Params.tags }}
+                <span class="tags">
+                  <i class="fas fa-tags"></i>
+                  {{ range $index, $tag := .Params.tags }}
+                    {{ if $index }}, {{ end }}
+                    <a href="{{ "tags/" | relURL }}{{ $tag | urlize }}">{{ $tag }}</a>
+                  {{ end }}
+                </span>
+              {{ end }}
+            </div>
+            
+            <div class="post-excerpt">
+              {{ if .Summary }}
+                {{ .Summary }}...
+              {{ else }}
+                {{ .Content | plainify | truncate 50 }}...
+              {{ end }}
+            </div>
+            
+            <div class="post-footer">
+              <a href="{{ .RelPermalink }}" class="read-more">
+                <i class="fas fa-code"></i>
+                閱讀更多
+              </a>
+            </div>
+          </div>
+        {{ end }}
+      </div>
+
+      {{ if gt $paginator.TotalPages 1 }}
+        <nav class="pagination-container">
+          <div class="pagination-info">
+            <i class="fas fa-file-code"></i>
+            第 {{ $paginator.PageNumber }} 頁，共 {{ $paginator.TotalPages }} 頁
+          </div>
+          {{ partial "pagination.html" . }}
+        </nav>
+      {{ end }}
+    </div>
+  </div>
+</div>
+{{ end }} 

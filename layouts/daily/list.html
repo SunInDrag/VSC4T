@@ -1,0 +1,217 @@
+{{ define "main" }}
+{{ partial "header.html" . }}
+
+<div class="vscode-container">
+  <!-- 左側資源管理器 -->
+  <div class="sidebar-explorer">
+    <!-- 分類導航 -->
+    <div class="explorer-section">
+      <div class="section-header">
+        <i class="fas fa-calendar-alt"></i>
+        <span>DAILY ARCHIVE</span>
+      </div>
+      <div class="section-content">
+        {{ $pages := where .Site.RegularPages "Section" "daily" }}
+        {{ range $pages.GroupByDate "2006-01" }}
+          <div class="archive-month">
+            <div class="folder">
+              <i class="fas fa-folder"></i>
+              <span>{{ .Key }}</span>
+              <span class="count">({{ len .Pages }})</span>
+            </div>
+            <div class="archive-posts">
+              {{ range .Pages }}
+                <div class="file">
+                  <i class="fas fa-file-alt"></i>
+                  <a href="{{ .RelPermalink }}">
+                    {{ .Date.Format "01-02" }} {{ if .Title }}{{ .Title }}{{ else }}Daily Record{{ end }}
+                  </a>
+                </div>
+              {{ end }}
+            </div>
+          </div>
+        {{ end }}
+      </div>
+    </div>
+    
+    <!-- 標籤列表 -->
+    {{ $dailyTags := slice }}
+    {{ range (where .Site.RegularPages "Section" "daily") }}
+      {{ range .Params.tags }}
+        {{ $dailyTags = $dailyTags | append . }}
+      {{ end }}
+    {{ end }}
+    
+    {{ $tagCount := dict }}
+    {{ range $dailyTags }}
+      {{ $tag := . }}
+      {{ $count := 0 }}
+      {{ range (where $.Site.RegularPages "Section" "daily") }}
+        {{ if in .Params.tags $tag }}
+          {{ $count = add $count 1 }}
+        {{ end }}
+      {{ end }}
+      {{ $tagCount = merge $tagCount (dict $tag $count) }}
+    {{ end }}
+    
+    <div class="explorer-section">
+      <div class="section-header">
+        <i class="fas fa-tags"></i>
+        <span>DAILY TAGS</span>
+      </div>
+      <div class="section-content">
+        {{ range $tag, $count := $tagCount }}
+          <div class="tag-item">
+            <i class="fas fa-tag"></i>
+            <a href="{{ "tags/" | relURL }}{{ $tag | urlize }}">{{ $tag }}</a>
+            <span class="count">({{ $count }})</span>
+          </div>
+        {{ end }}
+      </div>
+    </div>
+  </div>
+
+  <!-- 主要內容區域 -->
+  <div class="editor-content">
+    <div class="tab-bar">
+      <div class="tab active">
+        <i class="fas fa-calendar-day"></i>
+        <span>daily.md</span>
+      </div>
+    </div>
+    
+    <div class="content-area">
+      {{- $paginator := .Paginate .Pages }}
+      
+      <div class="daily-header">
+        <h1>
+          <i class="fas fa-calendar-day"></i>
+          Daily Records
+        </h1>
+        <p class="daily-count">{{ len (where .Site.RegularPages "Section" "daily") }} entries</p>
+      </div>
+      
+      <!-- 文章列表 -->
+      <div class="daily-container">
+        {{- range $moment := $paginator.Pages }}
+        <div class="daily-card">
+          <div class="daily-card-header">
+            <!-- 添加头像/图标 -->
+            <div class="daily-avatar">
+              <img src="{{ site.Params.label.icon | default "/images/avatar.png" }}" alt="{{ site.Params.author }}">
+            </div>
+            <div class="daily-card-info">
+              {{ if .Title }}
+              <h3 class="daily-title">{{ .Title }}</h3>
+              {{ end }}
+              <div class="daily-date">
+                <i class="fas fa-calendar"></i>
+                {{ .Date.Format "2006-01-02" }}
+              </div>
+            </div>
+          </div>
+          <div class="daily-content">
+            {{ .Content }}
+          </div>
+          {{ if .Params.tags }}
+          <div class="daily-tags">
+            {{- range $index, $tag := (.Params.tags) }}
+            <a href="{{ "tags/" | relURL }}{{ $tag | urlize }}" class="daily-tag">{{ $tag }}</a>
+            {{- end }}
+          </div>
+          {{ end }}
+        </div>
+        {{- end }}
+      </div>
+      
+      <!-- 分頁按鈕 -->
+      <div class="pagination-container">
+        {{ if $paginator.HasNext }}
+        <button id="loadMore" data-next="{{ $paginator.Next.URL }}">Load More</button>
+        {{ end }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 加載更多 JavaScript -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // 處理側邊欄月份折疊/展開
+    const folders = document.querySelectorAll('.archive-month .folder');
+    
+    folders.forEach(folder => {
+        folder.addEventListener('click', function() {
+            const parent = this.closest('.archive-month');
+            parent.classList.toggle('active');
+        });
+    });
+    
+    // 如果有當前月份，自動展開它
+    const currentMonth = new Date().toISOString().slice(0, 7); // 格式: 2023-01
+    
+    // 使用原生JavaScript查找包含當前月份的元素
+    let currentMonthFolder = null;
+    const spans = document.querySelectorAll('.archive-month .folder span');
+    
+    spans.forEach(span => {
+        if (span.textContent.includes(currentMonth)) {
+            currentMonthFolder = span;
+        }
+    });
+    
+    if (currentMonthFolder) {
+        currentMonthFolder.closest('.archive-month').classList.add('active');
+    } else {
+        // 如果沒有當前月份的folder，展開第一個
+        const firstFolder = document.querySelector('.archive-month');
+        if (firstFolder) {
+            firstFolder.classList.add('active');
+        }
+    }
+    
+    // 處理加載更多功能
+    let loadMoreBtn = document.getElementById("loadMore");
+
+    if (!loadMoreBtn) return;
+
+    let nextPage = loadMoreBtn.dataset.next;
+
+    loadMoreBtn.addEventListener("click", function () {
+        if (!nextPage) {
+            this.textContent = "No More Posts";
+            this.disabled = true;
+            return;
+        }
+
+        fetch(nextPage)
+            .then(response => {
+                if (!response.ok) throw new Error("HTTP Error: " + response.status);
+                return response.text();
+            })
+            .then(data => {
+                let parser = new DOMParser();
+                let doc = parser.parseFromString(data, "text/html");
+
+                let newCards = doc.querySelectorAll(".daily-card");
+                if (newCards.length > 0) {
+                    let container = document.querySelector(".daily-container");
+                    newCards.forEach(card => {
+                        container.appendChild(card.cloneNode(true));
+                    });
+                }
+
+                let newLoadMore = doc.querySelector("#loadMore");
+                nextPage = newLoadMore ? newLoadMore.dataset.next : null;
+
+                if (!nextPage) {
+                    this.textContent = "No More Posts";
+                    this.disabled = true;
+                }
+            })
+            .catch(error => console.error("Error:", error));
+    });
+});
+</script>
+
+{{ end }}

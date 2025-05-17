@@ -1,0 +1,136 @@
+{{ define "main" }}
+{{ partial "header.html" . }}
+
+<div class="vscode-container">
+  <div class="sidebar-explorer">
+    <div class="explorer-header">
+      <span class="explorer-title">
+        <i class="fas fa-folder-open"></i> EXPLORER
+      </span>
+    </div>
+    
+    <div class="explorer-section">
+      <div class="section-header">
+        <i class="fas fa-chevron-down"></i>
+        <span>BLOG CONTENTS</span>
+      </div>
+      
+      <div class="section-content">
+        {{ range $name, $taxonomy := .Site.Taxonomies.categories }}
+          <div class="folder">
+            <i class="fas fa-folder"></i>
+            <a href="{{ "categories/" | relURL }}{{ $name | urlize }}" class="category-link">
+              <span>{{ $name }}</span>
+              <span class="count">({{ len $taxonomy.Pages }})</span>
+            </a>
+          </div>
+        {{ end }}
+      </div>
+    </div>
+    
+    <div class="explorer-section">
+      <div class="section-header">
+        <i class="fas fa-chevron-down"></i>
+        <span>RECENT POSTS</span>
+      </div>
+      
+      <div class="section-content">
+        {{ range first 5 (where .Site.RegularPages "Type" "in" .Site.Params.mainSections) }}
+          <div class="file">
+            <i class="fas fa-file-code"></i>
+            <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+          </div>
+        {{ end }}
+      </div>
+    </div>
+
+    <div class="explorer-section">
+      <div class="section-header">
+        <i class="fas fa-chevron-down"></i>
+        <span>TAGS</span>
+      </div>
+      
+      <div class="section-content">
+        {{ range $name, $taxonomy := .Site.Taxonomies.tags }}
+          <div class="tag-item">
+            <i class="fas fa-tag"></i>
+            <a href="{{ "tags/" | relURL }}{{ $name | urlize }}">{{ $name }}</a>
+            <span class="count">({{ len $taxonomy.Pages }})</span>
+          </div>
+        {{ end }}
+      </div>
+    </div>
+  </div>
+
+  <div class="editor-content">
+    <div class="tab-bar">
+      <div class="tab active">
+        <i class="fas fa-home"></i>
+        <span>welcome.md</span>
+      </div>
+    </div>
+    
+    <div class="content-area">
+      <div class="posts-container">
+        {{ $paginator := .Paginate (where .Site.RegularPages "Type" "in" .Site.Params.mainSections) }}
+        {{ range $paginator.Pages }}
+          <div class="post-card">
+            <div class="post-header">
+              <i class="fas fa-file-alt"></i>
+              <span class="post-title">
+                <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+              </span>
+            </div>
+            
+            <div class="post-meta">
+              <span class="date">
+                <i class="fas fa-calendar-alt"></i>
+                {{ .Date.Format "2006-01-02" }}
+              </span>
+              
+              {{ if .Params.categories }}
+                <span class="category">
+                  <i class="fas fa-folder"></i>
+                  {{ if reflect.IsSlice .Params.categories }}
+                    {{ range $index, $category := .Params.categories }}
+                      {{ if $index }}, {{ end }}
+                      <a href="{{ "categories/" | relURL }}{{ $category | urlize }}">{{ $category }}</a>
+                    {{ end }}
+                  {{ else }}
+                    <a href="{{ "categories/" | relURL }}{{ .Params.categories | urlize }}">{{ .Params.categories }}</a>
+                  {{ end }}
+                </span>
+              {{ end }}
+            </div>
+            
+            <div class="post-excerpt">
+              {{ if .Summary }}
+                {{ .Summary }}...
+              {{ else }}
+                {{ .Content | plainify | truncate 50 }}...
+              {{ end }}
+            </div>
+            
+            <div class="post-footer">
+              <a href="{{ .RelPermalink }}" class="read-more">
+                <i class="fas fa-code"></i>
+                Read More
+              </a>
+            </div>
+          </div>
+        {{ end }}
+      </div>
+      
+      {{ if gt $paginator.TotalPages 1 }}
+        <nav class="pagination-container">
+          <div class="pagination-info">
+            <i class="fas fa-file-code"></i>
+            Page {{ $paginator.PageNumber }} of {{ $paginator.TotalPages }}
+          </div>
+          {{ partial "pagination.html" . }}
+        </nav>
+      {{ end }}
+    </div>
+  </div>
+</div>
+{{ end }} 

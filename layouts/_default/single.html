@@ -1,0 +1,132 @@
+{{ define "main" }}
+{{ partial "header.html" . }}
+
+<div class="vscode-container">
+  <!-- 左側資源管理器 -->
+  <div class="sidebar-explorer">
+    <!-- TOC導航 -->
+    <div class="explorer-section">
+      <div class="section-header">
+        <i class="fas fa-list"></i>
+        <span>TABLE OF CONTENTS</span>
+      </div>
+      <div class="section-content">
+        {{ .TableOfContents }}
+      </div>
+    </div>
+    
+    <!-- 同分類文章 -->
+    {{ if .Params.categories }}
+    <div class="explorer-section">
+      <div class="section-header">
+        <i class="fas fa-folder"></i>
+        <span>CATEGORY POSTS</span>
+      </div>
+      <div class="section-content">
+        {{ $currentCategory := "" }}
+        {{ if reflect.IsSlice .Params.categories }}
+          {{ $currentCategory = index .Params.categories 0 }}
+        {{ else }}
+          {{ $currentCategory = .Params.categories }}
+        {{ end }}
+        
+        {{ $categoryPages := where (where .Site.RegularPages "Params.categories" "intersect" (slice $currentCategory)) ".Permalink" "ne" .Permalink }}
+        {{ range first 8 $categoryPages }}
+          <div class="file">
+            <i class="fas fa-file-code"></i>
+            <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+          </div>
+        {{ end }}
+      </div>
+    </div>
+    {{ end }}
+    
+    <!-- 標籤列表 -->
+    {{ if .Params.tags }}
+    <div class="explorer-section">
+      <div class="section-header">
+        <i class="fas fa-tags"></i>
+        <span>ARTICLE TAGS</span>
+      </div>
+      <div class="section-content">
+        {{ range .Params.tags }}
+          {{ $tag := . }}
+          <div class="tag-item" data-href="{{ "tags/" | relURL }}{{ $tag | urlize }}">
+            <i class="fas fa-tag"></i>
+            <a href="{{ "tags/" | relURL }}{{ $tag | urlize }}">{{ $tag }}</a>
+          </div>
+        {{ end }}
+      </div>
+    </div>
+    {{ end }}
+  </div>
+
+  <!-- 主要內容區域 -->
+  <div class="editor-content">
+    <div class="tab-bar">
+      <div class="tab active">
+        <i class="fas fa-file-alt"></i>
+        <span>{{ .Title }}.md</span>
+      </div>
+    </div>
+    
+    <div class="content-area">
+      <article class="post-content">
+        <div class="post-header">
+          <h1>{{ .Title }}</h1>
+          <div class="post-meta">
+            <span class="date">
+              <i class="fas fa-calendar-alt"></i>
+              {{ .Date.Format "2006-01-02" }}
+            </span>
+            {{ if .Params.categories }}
+              <span class="categories">
+                <i class="fas fa-folder"></i>
+                <div class="categories-list">
+                  {{ if reflect.IsSlice .Params.categories }}
+                    {{ range $index, $category := .Params.categories }}
+                      <a href="{{ "categories/" | relURL }}{{ $category | urlize }}" class="category-item-post">{{ $category }}</a>
+                    {{ end }}
+                  {{ else }}
+                    <a href="{{ "categories/" | relURL }}{{ .Params.categories | urlize }}" class="category-item-post">{{ .Params.categories }}</a>
+                  {{ end }}
+                </div>
+              </span>
+            {{ end }}
+            {{ if .Params.tags }}
+              <span class="tags">
+                <i class="fas fa-tags"></i>
+                <div class="tags-list">
+                  {{ range .Params.tags }}
+                    <a href="{{ "tags/" | relURL }}{{ . | urlize }}" class="tag-item-post">{{ . }}</a>
+                  {{ end }}
+                </div>
+              </span>
+            {{ end }}
+          </div>
+        </div>
+        
+        <div class="post-body vscode-markdown">
+          {{ .Content }}
+        </div>
+        
+        <!-- 文章導航 -->
+        <nav class="post-nav">
+          {{ with .PrevInSection }}
+            <a class="prev" href="{{ .RelPermalink }}">
+              <i class="fas fa-chevron-left"></i>
+              {{ .Title }}
+            </a>
+          {{ end }}
+          {{ with .NextInSection }}
+            <a class="next" href="{{ .RelPermalink }}">
+              {{ .Title }}
+              <i class="fas fa-chevron-right"></i>
+            </a>
+          {{ end }}
+        </nav>
+      </article>
+    </div>
+  </div>
+</div>
+{{ end }} 

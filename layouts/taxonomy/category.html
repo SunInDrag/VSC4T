@@ -1,0 +1,58 @@
+{{ define "main" }}
+{{ partial "header.html" . }}
+
+<div class="vscode-container">
+  <!-- 左側資源管理器 -->
+  <div class="sidebar-explorer">
+    <div class="explorer-section">
+      <div class="section-header">
+        <i class="fas fa-folder-open"></i>
+        <span>CATEGORIES</span>
+      </div>
+      <div class="section-content">
+        {{ range $name, $taxonomy := .Site.Taxonomies.categories }}
+          <a class="category-item {{ if eq $.Title $name }}active{{ end }}" href="{{ "categories/" | relURL }}{{ $name | urlize }}">
+            <i class="fas fa-folder"></i>
+            <span>{{ $name }}</span>
+            <span class="count">({{ len $taxonomy.Pages }})</span>
+          </a>
+        {{ end }}
+      </div>
+    </div>
+  </div>
+
+  <!-- 主要內容區域 -->
+  <div class="editor-content">
+    <div class="tab-bar">
+      <div class="tab active">
+        <i class="fas fa-folder-open"></i>
+        <span>{{ .Title }}.md</span>
+      </div>
+    </div>
+    
+    <div class="content-area">
+      <div class="category-detail">
+        <div class="category-header">
+          <i class="fas fa-folder"></i>
+          <h2>{{ .Title }}</h2>
+          <span class="count">{{ len .Pages }} posts</span>
+        </div>
+        <div class="category-posts">
+          {{ range .Pages.ByDate.Reverse }}
+            <div class="post-item">
+              <i class="fas fa-file-alt"></i>
+              <div class="post-info">
+                <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+                <span class="date">
+                  <i class="fas fa-calendar-alt"></i>
+                  {{ .Date.Format "2006-01-02" }}
+                </span>
+              </div>
+            </div>
+          {{ end }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{{ end }} 

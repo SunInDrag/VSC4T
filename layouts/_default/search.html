@@ -1,0 +1,135 @@
+{{ define "main" }}
+{{ partial "header.html" . }}
+
+<div class="vscode-container">
+  <!-- Left sidebar explorer -->
+  <div class="sidebar-explorer">
+    <div class="explorer-section">
+      <div class="section-header">
+        <i class="fas fa-search"></i>
+        <span>{{ i18n "search_filters" | default "FILTERS" }}</span>
+      </div>
+      <div class="section-content">
+        <div class="search-filters">
+          <div class="filter-group">
+            <div class="filter-title">{{ i18n "search_in" | default "Search in" }}</div>
+            <div class="filter-item">
+              <input type="checkbox" id="search-titles" checked>
+              <label for="search-titles">{{ i18n "search_in_title" | default "Title" }}</label>
+            </div>
+            <div class="filter-item">
+              <input type="checkbox" id="search-content" checked>
+              <label for="search-content">{{ i18n "search_in_content" | default "Content" }}</label>
+            </div>
+            <div class="filter-item">
+              <input type="checkbox" id="search-tags" checked>
+              <label for="search-tags">{{ i18n "search_in_tags" | default "Tags" }}</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="explorer-section">
+      <div class="section-header">
+        <i class="fas fa-history"></i>
+        <span>{{ i18n "search_recent" | default "RECENT SEARCHES" }}</span>
+      </div>
+      <div class="section-content">
+        <div id="recent-searches">
+          <!-- Recent searches will be populated dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content area -->
+  <div class="editor-content">
+    <div class="tab-bar">
+      <div class="tab active">
+        <i class="fas fa-search"></i>
+        <span>search.md</span>
+      </div>
+    </div>
+    
+    <div class="content-area">
+      <div class="vs-search-header">
+        <h1><i class="fas fa-search"></i> {{ i18n "search" | default "Search" }}</h1>
+        <p>{{ i18n "search_placeholder" | default "Search for something..." }}</p>
+      </div>
+      
+      <div id="vs-search-container" class="vs-search-container">
+        <div class="vs-search-input-container">
+          <i class="fas fa-search vs-search-icon"></i>
+          <input type="text" id="vs-search-input" class="vs-search-input" placeholder="{{ i18n "search_placeholder" | default "Search..." }}" autofocus>
+          <button id="vs-search-clear" class="vs-search-clear">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="vs-search-status-bar">
+          <div class="vs-search-status">
+            <span id="vs-search-counter">0 {{ i18n "search_results" | default "results" }}</span>
+          </div>
+          <div class="vs-search-commands">
+            <span class="vs-keybind"><span class="vs-key">↑</span><span class="vs-key">↓</span> to navigate</span>
+            <span class="vs-keybind"><span class="vs-key">Enter</span> to select</span>
+            <span class="vs-keybind"><span class="vs-key">Esc</span> to {{ i18n "search_clear" | default "clear" }}</span>
+          </div>
+        </div>
+        
+        <div id="vs-search-results" class="vs-search-results">
+          <div class="vs-search-loading">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>{{ i18n "search_loading" | default "Loading search data..." }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 確保搜索配置在 search.js 加載前可用
+  window.HUGO_CONFIG = {
+    language: {{ .Site.Language.Lang | default "en" | jsonify }},
+    root: {{ .Site.BaseURL | default "/" | jsonify }},
+    search_placeholder: {{ i18n "search_placeholder" | default "Search..." | jsonify }},
+    search_no_results: {{ i18n "search_no_results" | default "No results found" | jsonify }},
+    search_results: {{ i18n "search_results" | default "results" | jsonify }},
+    search_result: {{ i18n "search_result" | default "result" | jsonify }},
+    search_loading: {{ i18n "search_loading" | default "Loading..." | jsonify }},
+    search_error: {{ i18n "search_error" | default "Error" | jsonify }}
+  };
+
+  // 特定于搜索的配置
+  window.BLACKCAT_SEARCH = {
+    root: {{ .Site.BaseURL | default "/" | jsonify }}
+  };
+</script>
+
+<script src="{{ "js/search.js" | relURL }}"></script>
+
+<script>
+  // Reset search on page load
+  document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('vs-search-input');
+    if (searchInput) {
+      // Focus the search input
+      setTimeout(() => searchInput.focus(), 100);
+      
+      // Clear search with Escape key
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && document.activeElement === searchInput) {
+          searchInput.value = '';
+          const event = new Event('input');
+          searchInput.dispatchEvent(event);
+        }
+      });
+    }
+    
+    // 檢查搜索數據可用性
+    console.log('[BlackCat] 搜索初始化完成，搜索路徑：', window.BLACKCAT_SEARCH.root + 'search.json');
+  });
+</script>
+{{ end }} 

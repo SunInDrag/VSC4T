@@ -1,0 +1,82 @@
+{{ define "main" }}
+{{ partial "header.html" . }}
+
+<div class="vscode-container">
+  <!-- 左側資源管理器 -->
+  <div class="sidebar-explorer">
+    <div class="explorer-section">
+      <div class="section-header">
+        {{ if eq .Data.Plural "tags" }}
+          <i class="fas fa-tags"></i>
+          <span>ALL TAGS</span>
+        {{ else if eq .Data.Plural "categories" }}
+          <i class="fas fa-folder"></i>
+          <span>ALL CATEGORIES</span>
+        {{ else }}
+          <i class="fas fa-list"></i>
+          <span>ALL {{ upper .Data.Plural }}</span>
+        {{ end }}
+      </div>
+      <div class="section-content">
+        {{ $type := .Data.Plural }}
+        {{ range $name, $taxonomy := (index .Site.Taxonomies .Data.Plural) }}
+          <div class="{{ if eq $type "tags" }}tag-item{{ else }}folder{{ end }}">
+            {{ if eq $type "tags" }}
+              <i class="fas fa-tag"></i>
+            {{ else }}
+              <i class="fas fa-folder"></i>
+            {{ end }}
+            <a href="{{ $type | relURL }}/{{ $name | urlize }}">{{ $name }}</a>
+            <span class="count">({{ len $taxonomy.Pages }})</span>
+          </div>
+        {{ end }}
+      </div>
+    </div>
+  </div>
+
+  <!-- 主要內容區域 -->
+  <div class="editor-content">
+    <div class="tab-bar">
+      <div class="tab active">
+        {{ if eq .Data.Plural "tags" }}
+          <i class="fas fa-tags"></i>
+        {{ else if eq .Data.Plural "categories" }}
+          <i class="fas fa-folder"></i>
+        {{ else }}
+          <i class="fas fa-list"></i>
+        {{ end }}
+        <span>{{ .Title }}.md</span>
+      </div>
+    </div>
+    
+    <div class="content-area">
+      <div class="terms-header">
+        <h1>
+          {{ if eq .Data.Plural "tags" }}
+            <i class="fas fa-tags"></i>
+          {{ else if eq .Data.Plural "categories" }}
+            <i class="fas fa-folder"></i>
+          {{ else }}
+            <i class="fas fa-list"></i>
+          {{ end }}
+          {{ .Title }}
+        </h1>
+      </div>
+
+      <div class="terms-list">
+        {{ range $name, $taxonomy := (index .Site.Taxonomies .Data.Plural) }}
+          <div class="term-item">
+            {{ if eq $.Data.Plural "tags" }}
+              <i class="fas fa-tag"></i>
+            {{ else }}
+              <i class="fas fa-folder"></i>
+            {{ end }}
+            <a href="{{ $.Data.Plural | relURL }}/{{ $name | urlize }}">{{ $name }}</a>
+            <span class="count">({{ len $taxonomy.Pages }})</span>
+          </div>
+        {{ end }}
+      </div>
+    </div>
+  </div>
+</div>
+{{ end }} 
