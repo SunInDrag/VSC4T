@@ -2,14 +2,16 @@ VSC4T @https://github.com/B143KC47/VSC4T HUGO移植版本
 
 ## 配色方案
 
-- **基礎色調**：使用Solarized Light為基礎
+- **基礎色調**：使用Solarized Light
 
-## 修復
+## 待修復
 - [x] archieve跟tags頁面沒有_index.md就不能正常顯示的問題
-- [ ] categories頁面沒有_index.md就不能正常顯示的問題
+- [x] categories頁面沒有_index.md就不能正常顯示的問題
 - [x] 代碼框的首行代碼會有縮進兩格的問題
 - [x] 代碼高亮不能正常顯示
-- [x] 代码块复制按钮重复出现的问题
+- [x] 代碼塊復制按鈕重復出現的問題
+- [ ] archieve頁面熱力圖：右邊顯示被遮擋、沒有月份
+- [ ] categories手風琴動畫會平行共用
 
 ## 安裝與使用
 
@@ -25,34 +27,6 @@ git clone https://github.com/SunInDrag/VSC4T.git
 theme = "VSC4T"
 ```
 
-
-## 配置示例
-
-在Hugo配置文件中的參數設置示例：
-
-```toml
-# 主題參數
-[params]
-  # 樣式配置
-  [params.style]
-    theme_color = "#fdf6e3"  # Solarized Base03
-    link_color = "#268bd2"   # Solarized Blue
-    accent_color = "#2aa198" # Solarized Cyan
-    font_family = "Maple Mono NF CN, Consolas, Source Code Pro, monospace"
-    background_color = "#eee8d5" # Solarized Base02
-    text_color = "#040404"   # 深色文本
-  
-  # 側邊欄配置
-  [params.sidebar]
-    enabled = true
-    position = "left"
-  
-  # 社交連結
-  [params.social]
-    github = "your_github_username"
-    twitter = "your_twitter_username"
-    email = "your_email@example.com"
-```
 
 ## 致謝
 
