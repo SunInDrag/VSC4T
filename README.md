@@ -12,6 +12,7 @@ VSC4T @https://github.com/B143KC47/VSC4T HUGO移植版本
 - [x] 代碼塊復制按鈕重復出現的問題
 - [ ] archieve頁面熱力圖：右邊顯示被遮擋、沒有月份
 - [ ] categories手風琴動畫會平行共用
+- [ ] 搜索功能不能使用
 
 ## 安裝與使用
 
