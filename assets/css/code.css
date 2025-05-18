@@ -68,6 +68,8 @@ figure.highlight {
   word-wrap: normal;
   tab-size: 4;
   line-height: 1.5;
+  /* 修复首行缩进问题 */
+  text-indent: 0 !important;
 }
 
 /* 确保代码内容中的每一行与行号对齐 */
@@ -77,6 +79,8 @@ figure.highlight {
   margin: 0; /* 确保没有外边距 */
   padding: 0; /* 确保没有内边距 */
   box-sizing: border-box; /* 确保边框盒模型一致 */
+  /* 修复缩进问题 */
+  text-indent: 0 !important;
 }
 
 /* 改进code-pre-wrapper布局 */
@@ -94,4 +98,99 @@ figure.highlight {
   margin: 0; /* 确保没有外边距 */
   padding: 0; /* 确保没有内边距 */
   box-sizing: border-box; /* 确保边框盒模型一致 */
+}
+
+/* 修复代码内部每一行的缩进问题 */
+.code-content .line .cl,
+.hljs .line {
+  padding: 0;
+  text-indent: 0 !important;
+  display: inline-block;
+  width: 100%;
+}
+
+/* 修复highlight.js的缩进问题 */
+.hljs {
+  padding: 0 !important;
+  text-indent: 0 !important;
+}
+
+.hljs .line:first-child,
+.code-content .line:first-child,
+.code-content code .line:first-child {
+  text-indent: 0 !important;
+}
+
+/* 基础代码块样式 */
+pre, code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+code {
+  padding: 0.2em 0.4em;
+  background-color: rgba(30, 30, 30, 0.9);
+  color: #d4d4d4;
+  border-radius: 3px;
+}
+
+pre code {
+  padding: 0;
+  background-color: transparent;
+}
+
+/* 内联代码 */
+
+
+/* 通用代码块容器 */
+pre {
+  margin: 1.5em 0;
+  padding: 1em;
+  overflow: auto;
+  background-color: #1e1e1e;
+  color: #d4d4d4;
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+/* 确保代码内容正确显示 */
+pre code {
+  display: block;
+  padding: 0;
+  overflow-x: auto;
+  white-space: pre;
+  word-wrap: normal;
+  tab-size: 4;
+  text-indent: 0 !important;
+}
+
+/* 与Chroma集成 */
+.highlight {
+  position: relative;
+  margin: 1.5em 0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+/* 修复与Chroma的集成 */
+.highlight pre {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* 确保行内高亮不会继承块样式 */
+:not(pre) > code.highlight {
+  display: inline;
+  padding: 0.2em 0.4em;
+  background-color: rgba(30, 30, 30, 0.9);
+}
+
+/* 修复Mermaid图表显示 */
+.mermaid {
+  background-color: transparent !important;
+  text-align: center;
 }

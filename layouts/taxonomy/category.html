@@ -10,7 +10,7 @@
         <span>CATEGORIES</span>
       </div>
       <div class="section-content">
-        {{ range $name, $taxonomy := .Site.Taxonomies.categories }}
+        {{ range $name, $taxonomy := site.Taxonomies.categories }}
           <a class="category-item {{ if eq $.Title $name }}active{{ end }}" href="{{ "categories/" | relURL }}{{ $name | urlize }}">
             <i class="fas fa-folder"></i>
             <span>{{ $name }}</span>

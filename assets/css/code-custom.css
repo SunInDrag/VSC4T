@@ -1,10 +1,22 @@
 /* 
 code-custom.css：负责
-
-复制按钮功能及样式
-颜色主题覆盖
-特定字体覆盖
+- 代码块容器样式增强
+- 内联代码样式
+- mermaid图表美化
+- 滚动指示器
  */
+
+/* VSC4T主题代码块自定义样式 */
+
+/* 代码块容器样式增强 */
+.highlight {
+  margin: 1.5em 0;
+  border-radius: 6px;
+  overflow: auto;
+  background-color: #1e1e1e;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  position: relative;
+}
 
 /* 代码块容器基本样式 */
 .code-block-container {
@@ -18,64 +30,7 @@ code-custom.css：负责
   height: auto !important;
 }
 
-
-/* 代码块复制按钮样式优化 */
-/* 隐藏复制按钮文本，只显示图标 */
-.copy-btn::before, 
-.copy-button::before {
-  content: "";
-  display: none !important;
-}
-
-/* 复制按钮统一样式 */
-.copy-btn, 
-.copy-button {
-  width:  26px;
-  height: 26px;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #2d2d2d;
-  border: 1px solid #3c3c3c;
-  border-radius: 4px;
-  color: #9d9d9d;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  opacity: 0;
-  z-index: 5;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-}
-
-/* 代码块容器悬停时显示复制按钮 */
-pre:hover .copy-button,
-.code-block-container:hover .copy-btn {
-  opacity: 1;
-}
-
-/* 复制按钮悬停和激活状态 */
-.copy-btn:hover,
-.copy-button:hover {
-  background: #3c3c3c;
-  color: #d4d4d4;
-}
-
-.copy-btn.copied,
-.copy-button.copied {
-  background: #0078d4;
-  color: #ffffff;
-  border-color: #0078d4;
-}
-
 /* 代码区域颜色覆盖 - 仅保留颜色相关覆盖，布局由 code.css 负责 */
-.highlight {
-  background: #1e1e1e;
-  color: #d4d4d4;
-}
-
 .highlight pre {
   background: #1e1e1e;
   color: #d4d4d4;
@@ -84,14 +39,23 @@ pre:hover .copy-button,
   border-radius: 6px;
 }
 
-/* 特殊字体覆盖 */
+/* 代码语言标签 */
 .code-language {
-  font-family: 'JetBrains Mono', monospace, 'Segoe UI', sans-serif;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #252526;
+  color: #9d9d9d;
+  padding: 2px 8px;
   font-size: 12px;
+  border-bottom-left-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  z-index: 2;
 }
 
-/* 美化普通代码块 */
-pre:not(.line-numbers-pre):not(.code-content) {
+/* 美化普通代码块 - 非Chroma高亮的代码块 */
+pre:not(.chroma) {
   background: #1e1e1e;
   color: #d4d4d4;
   padding: 16px;
@@ -108,14 +72,8 @@ pre:not(.line-numbers-pre):not(.code-content) {
   display: block;
 }
 
-/* 统一行号和代码颜色 */
-.hljs {
-  background: #1e1e1e !important;
-  color: #d4d4d4 !important;
-}
-
 /* 添加代码类型标记到普通代码块 */
-pre:not(.line-numbers-pre):not(.code-content):not(.mermaid.enhanced)::before {
+pre:not(.chroma):not(.mermaid)::before {
   content: "code";
   position: absolute;
   top: 0;
@@ -129,8 +87,37 @@ pre:not(.line-numbers-pre):not(.code-content):not(.mermaid.enhanced)::before {
   font-weight: 500;
 }
 
+/* 普通代码块的复制按钮样式 */
+pre:not(.chroma) .copy-code {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: var(--vscode-active);
+  border: 1px solid var(--vscode-border);
+  border-radius: 4px;
+  color: var(--vscode-text);
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.2s ease;
+  z-index: 100;
+}
+
+pre:not(.chroma):hover .copy-code {
+  opacity: 1;
+}
+
+/* 当有语言标签时，调整普通代码块的复制按钮位置 */
+pre:not(.chroma):not(.mermaid)::before ~ .copy-code {
+  right: 50px;
+}
+
 /* Enhanced Mermaid block label */
-pre.mermaid.enhanced::before {
+pre.mermaid::before {
   content: "mermaid";
   position: absolute;
   top: 0;
@@ -148,7 +135,7 @@ pre.mermaid.enhanced::before {
   transition: all 0.3s ease;
 }
 
-pre.mermaid.enhanced:hover::before {
+pre.mermaid:hover::before {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0,0,0,0.3);
   background: linear-gradient(135deg, #3a3a3a, #2c2c2c);
@@ -189,54 +176,41 @@ pre.mermaid.enhanced:hover::before {
   box-sizing: border-box; /* 确保边框盒模型一致 */
 }
 
-/* 提高代码可读性 */
-.hljs {
-  background: #1e1e1e !important;
-  color: #ededed !important;
-  max-width: 100%; /* 确保不会超出父容器 */
-  box-sizing: border-box; /* 确保padding不会导致宽度计算问题 */
-  padding: 0; /* 移除内边距 */
-  margin: 0; /* 移除外边距 */
+/* 修复首行缩进问题 */
+.chroma code {
+  text-indent: 0 !important;
 }
 
-/* 超长代码换行控制 */
-.code-content code {
-  white-space: pre;
-  word-wrap: normal;
-  tab-size: 4;
-  line-height: 1.5;
+/* 确保内联代码样式不被覆盖 */
+p code, li code, td code {
+  background-color: #ffffff;
+  padding: 0.2em 0.4em !important;
+  border-radius: 3px !important;
+  font-size: 0.9em !important;
 }
 
-/* 处理特殊高度的代码行 */
-.code-content .line img,
-.code-content .line svg,
-.code-content .line pre,
-.code-content .line div {
-  max-height: none; /* 确保内联元素不会导致行高异常 */
-  vertical-align: middle; /* 确保垂直对齐一致 */
+/* 美化mermaid图表 */
+pre.mermaid {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  text-align: center !important;
 }
 
-/* 在小屏幕上优化显示 */
-@media (max-width: 768px) {
-  .line-numbers-pre {
-    padding: 4px 6px; /* 与非移动版保持一致 */
-  }
-  
-  .code-content {
-    padding: 4px 8px !important; /* 与非移动版保持一致 */
-  }
+pre.mermaid svg {
+  max-width: 100%;
+  height: auto;
 }
 
-
-/* 调整普通代码块复制按钮位置，避免与code标签重叠 */
-pre:not(.line-numbers-pre):not(.code-content) .copy-button {
-  right: 45px; /* 向左移动，给"code"标签留出空间 */
-  opacity: 0; /* 默认隐藏 */
-  transition: opacity 0.2s ease; /* 平滑显示/隐藏过渡 */
-}
-
-/* 仅在鼠标悬停时显示普通代码块的复制按钮 */
-pre:not(.line-numbers-pre):not(.code-content):hover .copy-button {
-  opacity: 1;
+/* 代码滚动指示 */
+.highlight.scrollable::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 20px;
+  background: linear-gradient(to right, rgba(30, 30, 30, 0), rgba(30, 30, 30, 0.9));
+  pointer-events: none;
+  z-index: 1;
 }
 

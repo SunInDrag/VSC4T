@@ -721,10 +721,7 @@ pre:hover .copy-button {
   opacity: 1;
 }
 
-/* 确保只有代码块内的复制按钮可见 */
-pre:not(:has(code)) .copy-button {
-  display: none;
-}
+
 
 /* 代码块容器样式 */
 .hljs {

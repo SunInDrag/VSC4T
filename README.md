@@ -1,11 +1,15 @@
-
-
 VSC4T @https://github.com/B143KC47/VSC4T HUGO移植版本
 
 ## 配色方案
 
 - **基礎色調**：使用Solarized Light為基礎
 
+## 修復
+- [x] archieve跟tags頁面沒有_index.md就不能正常顯示的問題
+- [ ] categories頁面沒有_index.md就不能正常顯示的問題
+- [x] 代碼框的首行代碼會有縮進兩格的問題
+- [x] 代碼高亮不能正常顯示
+- [x] 代码块复制按钮重复出现的问题
 
 ## 安裝與使用
 
@@ -20,6 +24,7 @@ git clone https://github.com/SunInDrag/VSC4T.git
 ```yml
 theme = "VSC4T"
 ```
+
 
 ## 配置示例
 

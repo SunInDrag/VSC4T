@@ -7,14 +7,17 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
-  <!-- 添加代碼高亮樣式 -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/solarized-dark.min.css">
-  <!-- 添加highlight.js庫 -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-  <!-- 添加mermaid.js庫 -->
+  <!-- 添加mermaid.js库 -->
   <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
   
-  <!-- 使用Hugo資源管道引用CSS檔案 -->
+  <!-- 添加Chroma代码高亮支持 -->
+  {{ $chromaVSC4T := resources.Get "css/chroma-vsc4t.css" | minify }}
+  <link rel="stylesheet" href="{{ $chromaVSC4T.RelPermalink }}">
+  
+  {{ $chromaMod := resources.Get "css/chroma-mod.css" | minify }}
+  <link rel="stylesheet" href="{{ $chromaMod.RelPermalink }}">
+  
+  <!-- 使用Hugo资源管道引用CSS文件 -->
   {{ $code := resources.Get "css/code.css" | minify }}
   <link rel="stylesheet" href="{{ $code.RelPermalink }}">
   
@@ -54,22 +57,115 @@
   {{ $elements := resources.Get "css/elements.css" | minify }}
   <link rel="stylesheet" href="{{ $elements.RelPermalink }}">
   
-  <!-- 確保 main.css 最後載入，其定義的變數有最高優先權 -->
+  <!-- 确保 main.css 最后载入，其定义的变量有最高优先权 -->
   {{ $main := resources.Get "css/main.css" | minify }}
   <link rel="stylesheet" href="{{ $main.RelPermalink }}">
 
-  <!-- 添加 JetBrains Mono 字體 -->  
+  <!-- 添加 JetBrains Mono 字体 -->  
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
   {{ partial "custom_head.html" . }}
   
-  <!-- 使用Hugo資源管道引用JS檔案 -->
+  <!-- 使用Hugo资源管道引用JS文件 -->
   {{ $explorer := resources.Get "js/explorer.js" | minify }}
   <script src="{{ $explorer.RelPermalink }}"></script>
   
-  {{ $codeCopy := resources.Get "js/code-copy.js" | minify }}
-  <script src="{{ $codeCopy.RelPermalink }}"></script>
-  
-  {{ $codeEnhance := resources.Get "js/code-enhance.js" | minify }}
-  <script src="{{ $codeEnhance.RelPermalink }}"></script>
+  <!-- 添加代码块复制功能 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // 移除所有已存在的复制按钮
+      document.querySelectorAll('.copy-btn, .copy-button, .copy-code').forEach(function(button) {
+        button.remove();
+      });
+      
+      // 为所有Chroma高亮代码块添加复制按钮
+      document.querySelectorAll('.highlight').forEach(function(codeBlock) {
+        // 找到真正的代码元素
+        const preElement = codeBlock.querySelector('pre.chroma');
+        const codeElement = codeBlock.querySelector('code');
+        
+        if (!codeElement) return;
+        
+        // 获取语言信息
+        const lang = codeElement.getAttribute('data-lang');
+        if (lang && preElement) {
+          // 将语言信息传递给pre元素，用于CSS选择器
+          preElement.setAttribute('data-lang', lang);
+        }
+        
+        // 创建复制按钮
+        const copyButton = document.createElement('button');
+        copyButton.className = 'copy-code';
+        copyButton.title = '复制代码';
+        copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+        
+        // 添加到代码块
+        codeBlock.appendChild(copyButton);
+        
+        // 添加复制功能
+        copyButton.addEventListener('click', function() {
+          // 获取真正的代码内容
+          const code = codeElement.textContent;
+          navigator.clipboard.writeText(code).then(() => {
+            // 复制成功反馈 - 只改变图标
+            this.innerHTML = '<i class="fas fa-check"></i>';
+            this.classList.add('copied');
+            
+            // 2秒后恢复
+            setTimeout(() => {
+              this.innerHTML = '<i class="fas fa-copy"></i>';
+              this.classList.remove('copied');
+            }, 2000);
+          }).catch(function(err) {
+            console.error('复制失败:', err);
+          });
+        });
+      });
+      
+      // 为所有非Chroma代码块添加复制按钮（普通pre标签）
+      document.querySelectorAll('pre:not(.chroma):not(.mermaid)').forEach(function(preElement) {
+        // 创建复制按钮
+        const copyButton = document.createElement('button');
+        copyButton.className = 'copy-code';
+        copyButton.title = '复制代码';
+        copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+        
+        // 添加到代码块
+        preElement.appendChild(copyButton);
+        
+        // 设置相对定位以便按钮正确显示
+        if (getComputedStyle(preElement).position === 'static') {
+          preElement.style.position = 'relative';
+        }
+        
+        // 添加复制功能
+        copyButton.addEventListener('click', function() {
+          const code = preElement.textContent;
+          navigator.clipboard.writeText(code).then(() => {
+            // 复制成功反馈 - 只改变图标
+            this.innerHTML = '<i class="fas fa-check"></i>';
+            this.classList.add('copied');
+            
+            // 2秒后恢复
+            setTimeout(() => {
+              this.innerHTML = '<i class="fas fa-copy"></i>';
+              this.classList.remove('copied');
+            }, 2000);
+          }).catch(function(err) {
+            console.error('复制失败:', err);
+          });
+        });
+      });
+      
+      // 初始化mermaid
+      if (typeof mermaid !== 'undefined') {
+        mermaid.initialize({
+          startOnLoad: true,
+          theme: 'dark',
+          securityLevel: 'loose',
+          fontFamily: 'JetBrains Mono, Consolas, Monaco, monospace'
+        });
+      }
+    });
+  </script>
 </head> 
