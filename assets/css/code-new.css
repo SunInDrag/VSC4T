@@ -1,0 +1,294 @@
+/* VSC4T Theme Code Block Styles */
+
+/* 基本容器 */
+.post-content pre,
+.post-content pre code,
+.post-content .highlight pre.chroma {
+  margin: 1.5em 0;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--code-bg) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  border: 1px solid var(--code-border);
+  white-space: pre;
+  overflow-x: auto;
+  overflow-y: visible;
+  word-break: normal;
+  word-wrap: normal;
+  box-sizing: border-box;
+  min-width: 0;
+  width: auto;
+  max-width: 100%;
+  display: block;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+/* 代码块容器 */
+.highlight {
+  position: relative;
+  margin: 1.5em 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* 代码内容 */
+.highlight pre.chroma {
+  margin: 0;
+  padding: 1.2em;
+  background-color: transparent !important;
+  color: var(--code-text) !important;
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  tab-size: 4;
+  -moz-tab-size: 4;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+}
+
+/* 复制按钮 */
+.copy-code,
+.copy-button {
+  position: absolute;
+  top: 0.5em;
+  right: 0.5em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2em;
+  height: 2em;
+  background: var(--code-copy-bg);
+  border: 1px solid var(--code-copy-border);
+  border-radius: 4px;
+  color: var(--code-copy-text);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: auto;
+  transition: all 0.2s ease;
+  z-index: 101;
+  font-size: 0.9em;
+  padding: 0;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.highlight:hover .copy-code,
+.highlight:hover .copy-button,
+pre:hover .copy-code,
+pre:hover .copy-button {
+  opacity: 1;
+}
+
+.copy-code:hover,
+.copy-button:hover {
+  background: var(--code-copy-hover);
+  color: var(--code-bg);
+  transform: translateY(-1px);
+}
+
+.copy-code:active,
+.copy-button:active {
+  transform: translateY(0);
+}
+
+.copy-code.copied,
+.copy-button.copied {
+  background: var(--code-copy-active);
+  border-color: var(--code-copy-active);
+  color: var(--code-bg);
+}
+
+/* 代码行样式 */
+.highlight .line {
+  display: flex;
+  padding: 0 1em;
+}
+
+.highlight .line span {
+  display: inline;
+}
+
+/* 行号样式 */
+.highlight .lntd:first-child {
+  padding-right: 1em;
+  border-right: 1px solid var(--code-border);
+  color: var(--code-line-number);
+  user-select: none;
+  text-align: right;
+  min-width: 2.5em;
+}
+
+.highlight .lntd:last-child {
+  padding-left: 1em;
+}
+
+/* 内联代码 */
+:not(pre) > code {
+  color: var(--code-text);
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9em;
+  border: 1px solid var(--code-border);
+}
+
+/* 深色主题样式 */
+[data-theme="dark"] .post-content pre,
+[data-theme="dark"] .post-content pre code,
+[data-theme="dark"] .post-content .highlight pre.chroma {
+  background-color: #272822 !important;
+  border-color: #3e3d32;
+}
+
+/* 滚动条样式 */
+.post-content pre::-webkit-scrollbar,
+.highlight pre.chroma::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.post-content pre::-webkit-scrollbar-track,
+.highlight pre.chroma::-webkit-scrollbar-track {
+  background: var(--code-bg);
+}
+
+.post-content pre::-webkit-scrollbar-thumb,
+.highlight pre.chroma::-webkit-scrollbar-thumb {
+  background: var(--code-scrollbar);
+  border-radius: 3px;
+}
+
+.post-content pre::-webkit-scrollbar-thumb:hover,
+.highlight pre.chroma::-webkit-scrollbar-thumb:hover {
+  background: var(--code-scrollbar-hover);
+}
+
+/* 语法高亮相关样式 */
+.hljs {
+  min-width: 0;
+  width: auto;
+  white-space: pre;
+  word-break: normal;
+  word-wrap: normal;
+}
+
+.hljs, .hljs *, .chroma, .chroma *, .token, .token * {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* 代码块基础样式 */
+.post-content pre {
+  background: var(--code-bg) !important;
+  color: var(--code-text) !important;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border: 1px solid var(--code-border);
+  position: relative;
+  overflow-x: auto;
+  padding: 1.2em;
+}
+
+.post-content pre code {
+  background: transparent !important;
+  color: inherit !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0;
+  margin: 0;
+  border-radius: 0;
+}
+
+/* 内联代码样式 */
+:not(pre) > code {
+  background: var(--code-bg);
+  color: var(--code-text);
+  border: 1px solid var(--code-border);
+  border-radius: 4px;
+  padding: 0.2em 0.4em;
+}
+
+/* 移动端优化 */
+@media (max-width: 768px) {
+  .copy-code,
+  .copy-button {
+    width: 1.8em;
+    height: 1.8em;
+    font-size: 0.8em;
+  }
+  
+  .highlight pre.chroma {
+    font-size: 13px;
+    padding: 1em;
+  }
+  
+  .highlight .line {
+    padding: 0 0.8em;
+  }
+}
+
+/* header 只設置上圓角 */
+.code-header {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.code-block, .highlight {
+  margin: 1.5em 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--code-bg);
+  border: 1px solid var(--code-border);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  position: relative;
+}
+
+.code-block .code-header,
+.highlight .code-header {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  background: var(--code-header-bg);
+  border-bottom: 1px solid var(--code-header-border);
+}
+
+.code-block pre,
+.highlight pre.chroma,
+.highlight pre {
+  border-radius: 0 0 8px 8px !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  margin: 0;
+  padding: 1.2em;
+  color: var(--code-text) !important;
+}
+
+.code-block pre code,
+.highlight pre code {
+  background: transparent !important;
+  color: inherit !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0;
+  margin: 0;
+  border-radius: 0;
+}
+
+/* 讓 code-header 或 code-block hover 時複製按鈕顯示 */
+.code-header:hover .copy-button,
+.code-block:hover .copy-button {
+  opacity: 1;
+}

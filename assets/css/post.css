@@ -12,7 +12,7 @@
 .vscode-markdown h4,
 .vscode-markdown h5,
 .vscode-markdown h6 {
-  color: #353535;
+  color: var(--vscode-title);
   font-weight: 600;
   margin: 1.8em 0 0.9em; /* 进一步优化标题前后间距，增加前置空间 */
   position: relative;
@@ -88,7 +88,7 @@
   margin: 1.5em 0 1.7em;
   padding: 0.8em 1.2em;
   background: rgba(86, 156, 214, 0.07); /* 使用半透明的主题色作为背景 */
-  color: #4f4f4f; /* 略微提亮引用文字颜色 */
+  color: var(--vscode-title); /* 略微提亮引用文字颜色 */
   border-radius: 0 4px 4px 0; /* 添加右侧圆角 */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); /* 添加微妙阴影 */
   font-style: italic; /* 斜体强调引用文本 */

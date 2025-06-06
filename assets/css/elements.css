@@ -1,6 +1,3 @@
-
-
-/* ==================== 表格样式 ==================== */
 table {
   width: 100%;
   margin: 1.5em 0;
@@ -70,7 +67,7 @@ tbody tr:nth-child(odd) {
 /* 响应式表格 */
 @media (max-width: 768px) {
   table {
-    display: block;
+    
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
@@ -103,29 +100,4 @@ hr.decorated::after {
   color: var(--vscode-accent-light);
   padding: 0 10px;
   font-size: 0.8em;
-}
-
-/* ==================== 行内代码样式 ==================== */
-code {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
-  background-color: rgba(30, 30, 30, 0.6); /* 更深的背景色，接近VS Code */
-  color: #ce9178; /* 更准确的VS Code字符串颜色 */
-  padding: 0.2em 0.4em;
-  margin: 0 0.2em;
-  border-radius: 4px;
-  font-size: 0.9em;
-  border: 1px solid rgba(97, 97, 97, 0.3);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* 轻微阴影增强立体感 */
-  letter-spacing: 0.05em; /* 字母间距略微调整 */
-  font-feature-settings: "calt" 1; /* 连字特性，VS Code默认启用 */
-}
-
-pre code {
-  background-color: transparent;
-  color: inherit;
-  padding: 0;
-  margin: 0;
-  border: none;
-  box-shadow: none;
-  letter-spacing: normal;
 }

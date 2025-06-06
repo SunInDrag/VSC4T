@@ -1,4 +1,6 @@
 {{ define "main" }}
+{{- $dailycss := resources.Get "css/daily.css" | minify }}
+<link rel="stylesheet" href="{{ $dailycss.RelPermalink }}">
 {{ partial "header.html" . }}
 
 <div class="vscode-container">
@@ -11,61 +13,97 @@
         <span>DAILY ARCHIVE</span>
       </div>
       <div class="section-content">
-        {{ $pages := where .Site.RegularPages "Section" "daily" }}
-        {{ range $pages.GroupByDate "2006-01" }}
-          <div class="archive-month">
-            <div class="folder">
-              <i class="fas fa-folder"></i>
-              <span>{{ .Key }}</span>
-              <span class="count">({{ len .Pages }})</span>
+        {{ $dailySection := .Site.GetPage "section" "daily" }}
+        {{ if $dailySection }}
+          {{ $pages := $dailySection.RegularPages }}
+          {{ $years := slice }}
+          {{ range $pages }}
+            {{ $year := .Date.Format "2006" }}
+            {{ if not (in $years $year) }}
+              {{ $years = $years | append $year }}
+            {{ end }}
+          {{ end }}
+          {{ range sort $years "value" "desc" }}
+            {{ $yearPages := where $pages "Date.Format" "2006" . }}
+            <div class="archive-year">
+              <div class="folder">
+                <i class="fas fa-folder"></i>
+                <span>{{ . }}</span>
+                <span class="count">({{ len $yearPages }})</span>
+              </div>
+              <div class="archive-months">
+                {{ $months := slice }}
+                {{ range $yearPages }}
+                  {{ $month := .Date.Format "2006-01" }}
+                  {{ if not (in $months $month) }}
+                    {{ $months = $months | append $month }}
+                  {{ end }}
+                {{ end }}
+                {{ range sort $months "value" "desc" }}
+                  {{ $monthPages := where $yearPages "Date.Format" "2006-01" . }}
+                  <div class="archive-month">
+                    <div class="folder">
+                      <i class="fas fa-folder"></i>
+                      <span>{{ . }}</span>
+                      <span class="count">({{ len $monthPages }})</span>
+                    </div>
+                    <div class="archive-posts">
+                      {{ range sort $monthPages "Date" "desc" }}
+                        <div class="file">
+                          <i class="fas fa-file-alt"></i>
+                          <a href="{{ .RelPermalink }}">
+                            {{ .Date.Format "01-02" }} {{ if .Title }}{{ .Title }}{{ else }}{{ .Summary | truncate 30 }}{{ end }}
+                          </a>
+                        </div>
+                      {{ end }}
+                    </div>
+                  </div>
+                {{ end }}
+              </div>
             </div>
-            <div class="archive-posts">
-              {{ range .Pages }}
-                <div class="file">
-                  <i class="fas fa-file-alt"></i>
-                  <a href="{{ .RelPermalink }}">
-                    {{ .Date.Format "01-02" }} {{ if .Title }}{{ .Title }}{{ else }}Daily Record{{ end }}
-                  </a>
-                </div>
-              {{ end }}
-            </div>
-          </div>
+          {{ end }}
+        {{ else }}
+          <div style="color:#aaa;padding:10px;">無日誌資料</div>
         {{ end }}
       </div>
     </div>
     
-    <!-- 標籤列表 -->
+    <!-- DAILY TAGS 只顯示 daily 文章的 tags -->
+    {{ $dailySection := .Site.GetPage "section" "daily" }}
     {{ $dailyTags := slice }}
-    {{ range (where .Site.RegularPages "Section" "daily") }}
-      {{ range .Params.tags }}
-        {{ $dailyTags = $dailyTags | append . }}
-      {{ end }}
-    {{ end }}
-    
-    {{ $tagCount := dict }}
-    {{ range $dailyTags }}
-      {{ $tag := . }}
-      {{ $count := 0 }}
-      {{ range (where $.Site.RegularPages "Section" "daily") }}
-        {{ if in .Params.tags $tag }}
-          {{ $count = add $count 1 }}
+    {{ if $dailySection }}
+      {{ range $dailySection.RegularPages }}
+        {{ with .Params.tags }}
+          {{ range . }}
+            {{ if not (in $dailyTags .) }}
+              {{ $dailyTags = $dailyTags | append . }}
+            {{ end }}
+          {{ end }}
         {{ end }}
       {{ end }}
-      {{ $tagCount = merge $tagCount (dict $tag $count) }}
     {{ end }}
-    
     <div class="explorer-section">
       <div class="section-header">
         <i class="fas fa-tags"></i>
         <span>DAILY TAGS</span>
       </div>
       <div class="section-content">
-        {{ range $tag, $count := $tagCount }}
-          <div class="tag-item">
-            <i class="fas fa-tag"></i>
-            <a href="{{ "tags/" | relURL }}{{ $tag | urlize }}">{{ $tag }}</a>
-            <span class="count">({{ $count }})</span>
-          </div>
+        {{ if gt (len $dailyTags) 0 }}
+          {{ range $tag := sort $dailyTags }}
+            {{ $count := 0 }}
+            {{ range $dailySection.RegularPages }}
+              {{ if in .Params.tags $tag }}
+                {{ $count = add $count 1 }}
+              {{ end }}
+            {{ end }}
+            <div class="tag-item">
+              <i class="fas fa-tag"></i>
+              <a href="{{ "tags/" | relURL }}{{ $tag | urlize }}">{{ $tag }}</a>
+              <span class="count">({{ $count }})</span>
+            </div>
+          {{ end }}
+        {{ else }}
+          <div style="color:#aaa;padding:10px;">無標籤</div>
         {{ end }}
       </div>
     </div>
@@ -83,43 +121,29 @@
     <div class="content-area">
       {{- $paginator := .Paginate .Pages }}
       
-      <div class="daily-header">
-        <h1>
-          <i class="fas fa-calendar-day"></i>
-          Daily Records
-        </h1>
-        <p class="daily-count">{{ len (where .Site.RegularPages "Section" "daily") }} entries</p>
-      </div>
-      
       <!-- 文章列表 -->
       <div class="daily-container">
         {{- range $moment := $paginator.Pages }}
-        <div class="daily-card">
-          <div class="daily-card-header">
-            <!-- 添加头像/图标 -->
-            <div class="daily-avatar">
-              <img src="{{ site.Params.label.icon | default "/images/avatar.png" }}" alt="{{ site.Params.author }}">
+        <div class="tweet-card">
+          <div class="tweet-avatar">
+            <img src="{{ site.Params.label.icon | default "/images/avatar.png" }}" alt="{{ site.Params.author }}">
+          </div>
+          <div class="tweet-main">
+            <div class="tweet-header">
+              <span class="tweet-author">{{ site.Params.author }}</span>
+              <span class="tweet-date"><i class="fas fa-calendar"></i> {{ $moment.Date.Format "2006-01-02" }}</span>
             </div>
-            <div class="daily-card-info">
-              {{ if .Title }}
-              <h3 class="daily-title">{{ .Title }}</h3>
-              {{ end }}
-              <div class="daily-date">
-                <i class="fas fa-calendar"></i>
-                {{ .Date.Format "2006-01-02" }}
-              </div>
+            <div class="tweet-content">
+              {{ $moment.Content }}
             </div>
+            {{ if $moment.Params.tags }}
+            <div class="tweet-tags">
+              {{- range $index, $tag := ($moment.Params.tags) }}
+              <a href="{{ "tags/" | relURL }}{{ $tag | urlize }}" class="tweet-tag">#{{ $tag }}</a>
+              {{- end }}
+            </div>
+            {{ end }}
           </div>
-          <div class="daily-content">
-            {{ .Content }}
-          </div>
-          {{ if .Params.tags }}
-          <div class="daily-tags">
-            {{- range $index, $tag := (.Params.tags) }}
-            <a href="{{ "tags/" | relURL }}{{ $tag | urlize }}" class="daily-tag">{{ $tag }}</a>
-            {{- end }}
-          </div>
-          {{ end }}
         </div>
         {{- end }}
       </div>
@@ -137,38 +161,36 @@
 <!-- 加載更多 JavaScript -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    // 處理側邊欄月份折疊/展開
-    const folders = document.querySelectorAll('.archive-month .folder');
+    // 處理側邊欄年份和月份折疊/展開
+    const folders = document.querySelectorAll('.archive-year .folder, .archive-month .folder');
     
     folders.forEach(folder => {
         folder.addEventListener('click', function() {
-            const parent = this.closest('.archive-month');
+            const parent = this.closest('.archive-year, .archive-month');
             parent.classList.toggle('active');
         });
     });
     
-    // 如果有當前月份，自動展開它
-    const currentMonth = new Date().toISOString().slice(0, 7); // 格式: 2023-01
+    // 如果有當前年份和月份，自動展開它們
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear().toString();
+    const currentMonth = currentDate.toISOString().slice(0, 7); // 格式: 2023-01
     
-    // 使用原生JavaScript查找包含當前月份的元素
-    let currentMonthFolder = null;
-    const spans = document.querySelectorAll('.archive-month .folder span');
-    
-    spans.forEach(span => {
-        if (span.textContent.includes(currentMonth)) {
-            currentMonthFolder = span;
+    // 展開當前年份
+    const yearFolders = document.querySelectorAll('.archive-year .folder span');
+    yearFolders.forEach(span => {
+        if (span.textContent.includes(currentYear)) {
+            span.closest('.archive-year').classList.add('active');
         }
     });
     
-    if (currentMonthFolder) {
-        currentMonthFolder.closest('.archive-month').classList.add('active');
-    } else {
-        // 如果沒有當前月份的folder，展開第一個
-        const firstFolder = document.querySelector('.archive-month');
-        if (firstFolder) {
-            firstFolder.classList.add('active');
+    // 展開當前月份
+    const monthFolders = document.querySelectorAll('.archive-month .folder span');
+    monthFolders.forEach(span => {
+        if (span.textContent.includes(currentMonth)) {
+            span.closest('.archive-month').classList.add('active');
         }
-    }
+    });
     
     // 處理加載更多功能
     let loadMoreBtn = document.getElementById("loadMore");
@@ -193,7 +215,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 let parser = new DOMParser();
                 let doc = parser.parseFromString(data, "text/html");
 
-                let newCards = doc.querySelectorAll(".daily-card");
+                let newCards = doc.querySelectorAll(".tweet-card");
                 if (newCards.length > 0) {
                     let container = document.querySelector(".daily-container");
                     newCards.forEach(card => {
@@ -209,7 +231,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     this.disabled = true;
                 }
             })
-            .catch(error => console.error("Error:", error));
+            .catch(error => {
+                console.error("Error:", error);
+                this.textContent = "Error Loading Posts";
+                this.disabled = true;
+            });
     });
 });
 </script>
