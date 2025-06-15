@@ -30,7 +30,26 @@
           {{ $currentCategory = .Params.categories }}
         {{ end }}
         
-        {{ $categoryPages := where (where .Site.RegularPages "Params.categories" "intersect" (slice $currentCategory)) ".Permalink" "ne" .Permalink }}
+        {{ $categoryPages := slice }}
+        {{ range where .Site.RegularPages "Type" "posts" }}
+          {{ $pageCategories := .Params.categories }}
+          {{ if $pageCategories }}
+            {{ if reflect.IsSlice $pageCategories }}
+              {{ if in $pageCategories $currentCategory }}
+                {{ if ne $.Permalink .Permalink }}
+                  {{ $categoryPages = $categoryPages | append . }}
+                {{ end }}
+              {{ end }}
+            {{ else }}
+              {{ if eq $pageCategories $currentCategory }}
+                {{ if ne $.Permalink .Permalink }}
+                  {{ $categoryPages = $categoryPages | append . }}
+                {{ end }}
+              {{ end }}
+            {{ end }}
+          {{ end }}
+        {{ end }}
+        
         {{ range first 8 $categoryPages }}
           <div class="file">
             <i class="fas fa-file-code"></i>

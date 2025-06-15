@@ -1,103 +1,74 @@
-table {
+
+/* 添加表格容器 */
+.table-container {
   width: 100%;
+  overflow-x: auto;
+  padding: 0 10px;
   margin: 1.5em 0;
-  border-collapse: collapse;
-  border-radius: 6px;
-  overflow: hidden;
-  box-shadow: 0 4px 16px var(--vscode-shadow);
-  background-color: var(--vscode-bg);
-  font-size: 0.95em;
+  box-sizing: border-box;
 }
 
-/* 表头样式 */
+table {
+  width: auto;
+  min-width: 100%; /* 确保表格至少填满容器 */
+  margin: 0 auto;
+  border-collapse: collapse;
+  background-color: var(--vscode-bg);
+  box-shadow: 0 0 0 1px var(--vscode-border);
+  font-size: 0.95em;
+  white-space: nowrap; /* 防止内容换行 */
+}
+
 thead {
-  background-color: var(--vscode-bg-light);
+  background-color: var(--vscode-sidebar);
+  border-bottom: 2px solid var(--vscode-border);
+}
+
+th, td {
+  padding: 10px 20px;
+  text-align: center;
   border-bottom: 1px solid var(--vscode-border);
-  position: sticky;
-  top: 0;
-  z-index: 1;
+  border-right: 1px solid var(--vscode-border);
+}
+
+th:last-child, td:last-child {
+  border-right: none;
 }
 
 th {
-  padding: 10px 15px;
-  text-align: left;
-  font-weight: 500;
-  color: var(--vscode-accent-light);
-  border-right: 1px solid var(--vscode-border);
+  font-weight: 600;
+  color: var(--vscode-title);
 }
 
-th:last-child {
-  border-right: none;
-}
-
-/* 表格内容 */
-td {
-  padding: 10px 15px;
-  border-right: 1px solid var(--vscode-border);
-  border-bottom: 1px solid var(--vscode-border);
-  transition: background-color 0.2s;
-}
-
-td:last-child {
-  border-right: none;
-}
-
-tr:last-child td {
-  border-bottom: none;
-}
-
-/* 表格行悬停效果 */
-tbody tr:hover {
-  background-color: var(--vscode-line-highlight);
-}
-
-/* 斑马纹表格效果 */
 tbody tr:nth-child(odd) {
-  background-color: rgba(255, 255, 255, 0.01);
+  background-color: rgba(255, 255, 255, 0.15);
 }
 
-/* 表格标题和说明 */
-.table-caption {
-  margin-bottom: 0.5em;
-  color: var(--vscode-text-light);
-  font-style: italic;
-  font-size: 0.9em;
-}
-
-/* 响应式表格 */
-@media (max-width: 768px) {
-  table {
-    
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-}
-
-/* ==================== 分隔线样式 ==================== */
-hr {
-  height: 1px;
-  margin: 2em 0;
-  background-color: var(--vscode-border);
-  border: none;
+/* 移除不必要的样式 */
+td {
   position: relative;
-  overflow: visible;
 }
 
-/* 带有装饰效果的分隔线 */
-hr.decorated {
-  height: 2px;
-  background: linear-gradient(to right, transparent, var(--vscode-accent-light), transparent);
-}
-
-/* 分隔线中间装饰 */
-hr.decorated::after {
-  content: "●";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: var(--vscode-bg);
-  color: var(--vscode-accent-light);
-  padding: 0 10px;
-  font-size: 0.8em;
+@media (max-width: 768px) {
+  .table-container {
+    padding: 0 5px;
+    margin: 1em 0;
+  }
+  
+  table {
+    width: 100%;
+    box-shadow: none;
+    border: 1px solid var(--vscode-border);
+  }
+  
+  th, td {
+    padding: 8px 12px;
+    white-space: normal; /* 允许内容换行 */
+  }
+  
+  /* 小屏幕下减少列间距 */
+  th, td {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
 }
