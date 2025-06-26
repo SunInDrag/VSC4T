@@ -1,0 +1,245 @@
+/* Hugo Chroma 代码高亮调整 */
+
+/* 基本样式 */
+.chroma {
+    background-color: var(--vscode-active);
+    color: #d4d4d4;
+    font-family: 'JetBrains Mono', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    font-size: 0.9em;
+    line-height: 1.5;
+}
+
+/* 确保代码块背景色不受父元素影响 */
+.chroma code {
+    background-color: transparent !important;
+    padding: 0 !important;
+    text-indent: 0 !important;
+}
+
+/* 代码块容器样式 */
+.highlight {
+    position: relative;
+    margin: 1.5em 0;
+    overflow: auto;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* 复制按钮 */
+.copy-code {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: var(--vscode-active);
+    border: 1px solid var(--vscode-border);
+    border-radius: 4px;
+    color: var(--vscode-text);
+    cursor: pointer;
+    opacity: 0;
+    transition: all 0.2s ease;
+    z-index: 100;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.copy-code:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.highlight:hover .copy-code {
+    opacity: 1;
+}
+
+.copy-code:hover {
+    background: var(--vscode-border);
+}
+
+.copy-code.copied {
+    background: var(--vscode-accent);
+    border-color: var(--vscode-accent);
+}
+
+.copy-code:hover::before {
+    opacity: 1;
+}
+
+/* 语言标签样式 */
+pre.chroma[data-lang]::before {
+    content: attr(data-lang);
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 2px 8px;
+    font-size: 0.75em;
+    color: #d4d4d4;
+    background-color: #444;
+    border-bottom-left-radius: 4px;
+    text-transform: uppercase;
+    z-index: 4;
+}
+
+/* 当有语言标签时，调整复制按钮位置 */
+pre.chroma[data-lang] ~ .copy-code {
+    top: 24px;
+}
+
+/* 行号和代码内容样式调整 */
+.chroma .lntd:first-child {
+    padding-right: 10px;
+    border-right: 1px solid #444;
+}
+
+.chroma .lntd:last-child {
+    padding-left: 10px;
+}
+
+.chroma .lnt {
+    margin-right: 0.5em;
+    color: #888;
+}
+
+/* 修复第一行缩进问题 */
+.chroma code { 
+    text-indent: 0 !important;
+}
+
+/* 确保代码行有适当的内边距 */
+.chroma .line {
+    padding: 0 4px;
+}
+
+/* 行高亮样式 */
+.chroma .hl {
+    background-color: rgba(255, 255, 0, 0.1);
+    display: block;
+    width: 100%;
+}
+
+/* 确保不会继承背景色 */
+.chroma .lntable {
+    background-color: #1e1e1e;
+    border-radius: 6px;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow: auto;
+    display: block;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+/* 获取code元素的data-lang属性 */
+.highlight pre.chroma code[data-lang]::before {
+    content: none !important; /* 确保不重复显示 */
+}
+
+/* 为不同语言添加不同颜色标签 */
+pre.chroma[data-lang="js"]::before,
+pre.chroma[data-lang="javascript"]::before {
+    background-color: #f7df1e;
+    color: #000;
+}
+
+pre.chroma[data-lang="ts"]::before,
+pre.chroma[data-lang="typescript"]::before {
+    background-color: #3178c6;
+    color: #fff;
+}
+
+pre.chroma[data-lang="html"]::before {
+    background-color: #e34c26;
+    color: #fff;
+}
+
+pre.chroma[data-lang="css"]::before {
+    background-color: #264de4;
+    color: #fff;
+}
+
+pre.chroma[data-lang="go"]::before {
+    background-color: #00ADD8;
+    color: #fff;
+}
+
+pre.chroma[data-lang="python"]::before,
+pre.chroma[data-lang="py"]::before {
+    background-color: #306998;
+    color: #fff;
+}
+
+pre.chroma[data-lang="rust"]::before {
+    background-color: #DEA584;
+    color: #000;
+}
+
+pre.chroma[data-lang="java"]::before {
+    background-color: #B07219;
+    color: #fff;
+}
+
+pre.chroma[data-lang="csharp"]::before,
+pre.chroma[data-lang="cs"]::before {
+    background-color: #178600;
+    color: #fff;
+}
+
+pre.chroma[data-lang="php"]::before {
+    background-color: #4F5D95;
+    color: #fff;
+}
+
+pre.chroma[data-lang="ruby"]::before,
+pre.chroma[data-lang="rb"]::before {
+    background-color: #CC342D;
+    color: #fff;
+}
+
+pre.chroma[data-lang="swift"]::before {
+    background-color: #F05138;
+    color: #fff;
+}
+
+pre.chroma[data-lang="kotlin"]::before {
+    background-color: #A97BFF;
+    color: #fff;
+}
+
+pre.chroma[data-lang="bash"]::before,
+pre.chroma[data-lang="sh"]::before,
+pre.chroma[data-lang="shell"]::before {
+    background-color: #4EAA25;
+    color: #fff;
+}
+
+pre.chroma[data-lang="yaml"]::before,
+pre.chroma[data-lang="yml"]::before {
+    background-color: #CB171E;
+    color: #fff;
+}
+
+pre.chroma[data-lang="json"]::before {
+    background-color: #292929;
+    color: #fff;
+}
+
+pre.chroma[data-lang="md"]::before,
+pre.chroma[data-lang="markdown"]::before {
+    background-color: #083FA1;
+    color: #fff;
+}
+
+pre.chroma[data-lang="sql"]::before {
+    background-color: #e38c00;
+    color: #fff;
+}
+
+pre.chroma[data-lang="xml"]::before {
+    background-color: #0060AC;
+    color: #fff;
+} 

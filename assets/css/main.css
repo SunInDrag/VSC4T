@@ -1,17 +1,115 @@
 @import url("https://fontsapi.zeoseven.com/442/main/result.css");
 
+/* 主題變量 */
 :root {
-  /* Solarized Dark 配色 */
-  --vscode-bg: #fdf6e3;         /* Solarized Base03 */
-  --vscode-sidebar: #eee8d5;    /* Solarized Base02 */
+  /* Solarized Light 配色 */
+  --vscode-bg: #f8efe7;         /* Solarized Base03 */
+  --vscode-sidebar: #f0e6dc;    /* Solarized Base02 */
   --vscode-text: #040404;       /* Solarized Base1 */
-  --vscode-active: #c4b997;     /* Solarized Base01 */
+  --vscode-title: #353535;
+  --vscode-active: #e6dcd2;     /* Solarized Base01 */
   --vscode-highlight: #268bd2;  /* Solarized Blue */
   --vscode-accent: #2aa198;     /* Solarized Cyan */
-  --vscode-border: #c4b997;
+  --vscode-border: #d4c9c0;
   --font-family: 'Maple Mono NF CN', 'Consolas', 'Source Code Pro', monospace;
+  --theme-transition-duration: 0.2s;
+
+  /* 代码块亮色主题变量 (Rose Pine Dawn) */
+  --code-bg: #faf4ed;          /* Rose Pine Dawn Base */
+  --code-text: #575279;        /* Rose Pine Dawn Text */
+  --code-border: #dfdad9;      /* Rose Pine Dawn Muted */
+  --code-header-bg: #f2e9e1;   /* Rose Pine Dawn Surface */
+  --code-header-border: #dfdad9; /* Rose Pine Dawn Muted */
+  --code-line-number: #9893a5; /* Rose Pine Dawn Muted */
+  --code-copy-bg: #f2e9e1;     /* Rose Pine Dawn Surface */
+  --code-copy-border: #dfdad9; /* Rose Pine Dawn Muted */
+  --code-copy-text: #575279;   /* Rose Pine Dawn Text */
+  --code-copy-hover: #907aa9;  /* Rose Pine Dawn Iris */
+  --code-copy-active: #d7827e; /* Rose Pine Dawn Love */
+  --code-scrollbar: #dfdad9;   /* Rose Pine Dawn Muted */
+  --code-scrollbar-hover: #907aa9; /* Rose Pine Dawn Iris */
 }
 
+/* 深色主題 */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --vscode-bg: #191724;         /* Rosé Pine Base */
+    --vscode-sidebar: #1f1d2e;    /* Rosé Pine Surface */
+    --vscode-text: #e0def4;       /* Rosé Pine Text */
+    --vscode-title: #ffffff;
+    --vscode-active: #26233a;     /* Rosé Pine Overlay */
+    --vscode-highlight: #c4a7e7;  /* Rosé Pine Iris */
+    --vscode-accent: #9ccfd8;     /* Rosé Pine Foam */
+    --vscode-border: #403d52;     /* Rosé Pine Muted */
+
+    /* 代码块暗色主题变量 (Rose Pine) */
+    --code-bg: #191724;          /* Rose Pine Base */
+    --code-text: #e0def4;        /* Rose Pine Text */
+    --code-border: #403d52;      /* Rose Pine Muted */
+    --code-header-bg: #1f1d2e;   /* Rose Pine Surface */
+    --code-header-border: #403d52; /* Rose Pine Muted */
+    --code-line-number: #6e6a86; /* Rose Pine Muted */
+    --code-copy-bg: #1f1d2e;     /* Rose Pine Surface */
+    --code-copy-border: #403d52; /* Rose Pine Muted */
+    --code-copy-text: #e0def4;   /* Rose Pine Text */
+    --code-copy-hover: #c4a7e7;  /* Rose Pine Iris */
+    --code-copy-active: #eb6f92; /* Rose Pine Love */
+    --code-scrollbar: #403d52;   /* Rose Pine Muted */
+    --code-scrollbar-hover: #c4a7e7; /* Rose Pine Iris */
+  }
+}
+
+/* 強制淺色主題 */
+[data-theme="light"] {
+  --vscode-bg: #f8efe7;
+  --vscode-sidebar: #f0e6dc;
+  --vscode-text: #040404;
+  --vscode-title: #353535;
+  --vscode-active: #e6dcd2;
+  --vscode-highlight: #268bd2;
+  --vscode-accent: #2aa198;
+  --vscode-border: #d4c9c0;
+  /* 代码块亮色主题变量 (Rose Pine Dawn) */
+  --code-bg: #faf4ed;          /* Rose Pine Dawn Base */
+  --code-text: #575279;        /* Rose Pine Dawn Text */
+  --code-border: #dfdad9;      /* Rose Pine Dawn Muted */
+  --code-header-bg: #f2e9e1;   /* Rose Pine Dawn Surface */
+  --code-header-border: #dfdad9; /* Rose Pine Dawn Muted */
+  --code-line-number: #9893a5; /* Rose Pine Dawn Muted */
+  --code-copy-bg: #f2e9e1;     /* Rose Pine Dawn Surface */
+  --code-copy-border: #dfdad9; /* Rose Pine Dawn Muted */
+  --code-copy-text: #575279;   /* Rose Pine Dawn Text */
+  --code-copy-hover: #907aa9;  /* Rose Pine Dawn Iris */
+  --code-copy-active: #d7827e; /* Rose Pine Dawn Love */
+  --code-scrollbar: #dfdad9;   /* Rose Pine Dawn Muted */
+  --code-scrollbar-hover: #907aa9; /* Rose Pine Dawn Iris */
+}
+
+/* 強制深色主題 */
+[data-theme="dark"] {
+  --vscode-bg: #191724;
+  --vscode-sidebar: #1f1d2e;
+  --vscode-text: #e0def4;
+  --vscode-title: #ffffff;
+  --vscode-active: #26233a;
+  --vscode-highlight: #c4a7e7;
+  --vscode-accent: #9ccfd8;
+  --vscode-border: #403d52;
+  /* 代码块暗色主题变量 (Rose Pine) */
+  --code-bg: #191724;          /* Rose Pine Base */
+  --code-text: #e0def4;        /* Rose Pine Text */
+  --code-border: #403d52;      /* Rose Pine Muted */
+  --code-header-bg: #1f1d2e;   /* Rose Pine Surface */
+  --code-header-border: #403d52; /* Rose Pine Muted */
+  --code-line-number: #6e6a86; /* Rose Pine Muted */
+  --code-copy-bg: #1f1d2e;     /* Rose Pine Surface */
+  --code-copy-border: #403d52; /* Rose Pine Muted */
+  --code-copy-text: #e0def4;   /* Rose Pine Text */
+  --code-copy-hover: #c4a7e7;  /* Rose Pine Iris */
+  --code-copy-active: #eb6f92; /* Rose Pine Love */
+  --code-scrollbar: #403d52;   /* Rose Pine Muted */
+  --code-scrollbar-hover: #c4a7e7; /* Rose Pine Iris */
+}
 
 /* 基本样式 */
 body {
@@ -618,12 +716,12 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   .copy-button {
-    opacity: 1;
-    top: 5px;
-    right: 5px;
-    width: 24px;
-    height: 24px;
-    font-size: 12px;
+    opacity: 0;
+    top: 0.5em;
+    right: 0.5em;
+    width: 2em;
+    height: 2em;
+    font-size: 0.9em;
   }
   
   /* 优化移动端滚动体验 */
@@ -721,11 +819,6 @@ pre:hover .copy-button {
   opacity: 1;
 }
 
-/* 确保只有代码块内的复制按钮可见 */
-pre:not(:has(code)) .copy-button {
-  display: none;
-}
-
 /* 代码块容器样式 */
 .hljs {
   width: 100%;
@@ -789,7 +882,6 @@ img {
   display: block !important;
 }
 
-
 /* 在移動設備上的側邊欄行為 */
 @media (max-width: 768px) {
   .blackcat-theme .sidebar-explorer {
@@ -803,5 +895,102 @@ img {
   .blackcat-theme .sidebar-explorer.show {
     left: 0;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* 主題切換過渡效果 */
+html {
+  transition: background-color var(--theme-transition-duration) ease-in-out,
+              color var(--theme-transition-duration) ease-in-out;
+}
+
+/* 確保所有顏色變化都有過渡效果 */
+body,
+.footer,
+.status-bar,
+.post-item,
+.sidebar,
+.navbar,
+.toc-container,
+.post-content,
+.sidebar-section,
+.pagination-container,
+.series-container,
+.recommended-posts,
+.tag-container,
+a,
+button,
+input,
+select,
+textarea,
+pre,
+code,
+.hljs {
+  transition: background-color var(--theme-transition-duration) ease-in-out,
+              color var(--theme-transition-duration) ease-in-out,
+              border-color var(--theme-transition-duration) ease-in-out,
+              box-shadow var(--theme-transition-duration) ease-in-out;
+}
+
+/* 主題切換按鈕樣式 */
+.theme-toggle button {
+  background: none;
+  border: none;
+  color: var(--vscode-text);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+}
+
+.theme-toggle button:hover {
+  background-color: var(--vscode-active);
+}
+
+.theme-toggle button:active {
+  transform: scale(0.95);
+}
+
+.theme-toggle i {
+  font-size: 14px;
+}
+
+.back-to-top {
+  position: fixed;
+  right: 32px;
+  bottom: 48px;
+  z-index: 9999;
+  width: 48px;
+  height: 48px;
+  background: var(--vscode-border);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s, background 0.2s;
+  font-size: 1.6rem;
+}
+.back-to-top.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+.back-to-top:hover {
+  background: var(--vscode-accent);
+}
+@media (max-width: 768px) {
+  .back-to-top {
+    right: 16px;
+    bottom: 16px;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
   }
 }

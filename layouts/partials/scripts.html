@@ -39,7 +39,48 @@ document.addEventListener('DOMContentLoaded', (event) => {
   });
 });
 </script>
-<script src="{{ "js/toc.js" | relURL }}"></script>
+
+<!-- 使用Hugo资源管道引用JS文件 -->
+{{ $toc := resources.Get "js/toc.js" }}
+{{ if $toc }}
+<script src="{{ $toc.RelPermalink }}"></script>
+{{ end }}
+
+{{ $main := resources.Get "js/main.js" }}
+{{ if $main }}
+<script src="{{ $main.RelPermalink }}"></script>
+{{ end }}
+
+{{ $search := resources.Get "js/search.js" }}
+{{ if $search }}
+<script src="{{ $search.RelPermalink }}"></script>
+{{ end }}
+
+{{ $codeCopy := resources.Get "js/code-copy.js" }}
+{{ if $codeCopy }}
+<script src="{{ $codeCopy.RelPermalink }}"></script>
+{{ end }}
+
+{{ if eq .Layout "categories" }}
+{{ $categories := resources.Get "js/categories-toggle.js" }}
+{{ if $categories }}
+<script src="{{ $categories.RelPermalink }}"></script>
+{{ end }}
+{{ end }}
+
+{{ $explorer := resources.Get "js/explorer.js" }}
+{{ if $explorer }}
+<script src="{{ $explorer.RelPermalink }}"></script>
+{{ end }}
+
+<!-- 初始化側邊欄 -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  if (document.querySelector('.sidebar-explorer') && typeof initExplorerEvents === 'function') {
+    initExplorerEvents();
+  }
+});
+</script>
 
 <!-- Scripts -->
 <script>
@@ -66,22 +107,4 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 {{ range .Site.Params.custom_js }}
 <script src="{{ . | relURL }}"></script>
-{{ end }}
-
-<!-- 添加所有需要的腳本 -->
-<script src="{{ "js/main.js" | relURL }}"></script>
-<script src="{{ "js/search.js" | relURL }}"></script>
-{{ if eq .Layout "categories" }}
-<script src="{{ "js/categories-toggle.js" | relURL }}"></script>
-{{ end }}
-
-<!-- 側邊欄事件處理 -->
-<script src="{{ "js/explorer.js" | relURL }}"></script>
-<!-- 初始化側邊欄 -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  if (document.querySelector('.sidebar-explorer') && typeof initExplorerEvents === 'function') {
-    initExplorerEvents();
-  }
-});
-</script> 
+{{ end }} 

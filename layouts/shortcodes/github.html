@@ -1,0 +1,191 @@
+<style>
+  .github-repo {
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    padding: 16px;
+    margin: 16px 0;
+    background-color: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+    transition: border-color 0.2s;
+  }
+  
+  .github-repo:hover {
+    border-color: #0969da;
+  }
+  
+  .dark .github-repo {
+    background-color: #0d1117;
+    border-color: #30363d;
+    color: #e6edf3;
+  }
+  
+  .github-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  
+  .github-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    fill: #656d76;
+  }
+  
+  .dark .github-icon {
+    fill: #7d8590;
+  }
+  
+  .github-name {
+    font-weight: 600;
+    color: #0969da;
+    text-decoration: none;
+    font-size: 14px;
+  }
+  
+  .github-name:hover {
+    text-decoration: underline;
+  }
+  
+  .dark .github-name {
+    color: #58a6ff;
+  }
+  
+  .github-visibility {
+    margin-left: auto;
+    padding: 2px 7px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #656d76;
+    border: 1px solid #d0d7de;
+    border-radius: 2em;
+    background-color: transparent;
+  }
+  
+  .dark .github-visibility {
+    color: #7d8590;
+    border-color: #30363d;
+  }
+  
+  .github-description {
+    color: #656d76;
+    font-size: 14px;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  
+  .dark .github-description {
+    color: #7d8590;
+  }
+  
+  .github-meta {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    color: #656d76;
+  }
+  
+  .dark .github-meta {
+    color: #7d8590;
+  }
+  
+  .github-language {
+    display: flex;
+    align-items: center;
+    margin-right: 16px;
+  }
+  
+  .language-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 4px;
+  }
+  
+  .github-stars {
+    display: flex;
+    align-items: center;
+  }
+  
+  .star-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+    fill: currentColor;
+  }
+</style>
+
+{{ $repo := .Get "repo" }}
+{{ $api := printf "https://api.github.com/repos/%s" $repo }}
+{{ with resources.GetRemote $api }}
+  {{ $json := . | transform.Unmarshal }}
+  {{/* 語言顏色對照表 */}}
+  {{ $lang := lower $json.language }}
+  {{ $colors := dict
+    "go" "#00ADD8"
+    "javascript" "#F1E05A"
+    "python" "#3572A5"
+    "java" "#B07219"
+    "c++" "#F34B7D"
+    "c" "#555555"
+    "typescript" "#2B7489"
+    "html" "#E34C26"
+    "css" "#563D7C"
+    "shell" "#89E051"
+    "rust" "#DEA584"
+    "php" "#4F5D95"
+    "kotlin" "#F18E33"
+    "dart" "#00B4AB"
+    "ruby" "#701516"
+    "swift" "#FA7343"
+  }}
+  {{ $color := index $colors $lang | default "#586069" }}
+  
+  <div class="github-repo">
+    <div class="github-header">
+      <svg class="github-icon" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+      </svg>
+      <a class="github-name" href="https://github.com/{{ $repo }}" target="_blank" rel="noopener">
+        {{ $json.full_name }}
+      </a>
+      <span class="github-visibility">
+        {{ if $json.private }}Private{{ else }}Public{{ end }}
+      </span>
+    </div>
+    
+    {{ if $json.description }}
+    <div class="github-description">
+      {{ $json.description }}
+    </div>
+    {{ end }}
+    
+    <div class="github-meta">
+      {{ if $json.language }}
+      <div class="github-language">
+        <span class="language-color" style="background-color: {{ $color }}"></span>
+        <span>{{ $json.language }}</span>
+      </div>
+      {{ end }}
+      
+      <div class="github-stars">
+        <svg class="star-icon" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/>
+        </svg>
+        <span>{{ $json.stargazers_count }}</span>
+      </div>
+    </div>
+  </div>
+{{ else }}
+  <div class="github-repo" style="border-color: #d1242f; color: #d1242f;">
+    <div class="github-header">
+      <svg class="github-icon" style="fill: #d1242f;" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+      </svg>
+      <span style="font-weight: 600;">無法取得 GitHub 倉庫資訊</span>
+    </div>
+    <div class="github-description">
+      倉庫 "{{ $repo }}" 可能不存在或無法訪問
+    </div>
+  </div>
+{{ end }}

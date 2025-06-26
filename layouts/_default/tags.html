@@ -2,7 +2,7 @@
 {{ partial "header.html" . }}
 
 <!-- Group tags by first letter -->
-{{ $tags := $.Site.Taxonomies.tags.ByCount }}
+{{ $tags := site.Taxonomies.tags.ByCount }}
 {{ $grouped := dict }}
 
 {{ range $key, $value := $tags }}

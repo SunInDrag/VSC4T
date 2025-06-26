@@ -1,66 +1,114 @@
-document.addEventListener('DOMContentLoaded', () => {
-  // 选择所有代码块
-  document.querySelectorAll('pre code').forEach(codeBlock => {
-    const pre = codeBlock.parentElement;
-    
-    // 创建复制按钮
+document.addEventListener('DOMContentLoaded', function() {
+  // 處理 .highlight 容器
+  document.querySelectorAll('.highlight').forEach(function(block) {
+    if (block.querySelector('.code-header')) return;
+
+    // 取得語言
+    let language = 'text';
+    const codeElement = block.querySelector('code');
+    if (codeElement) {
+      const match = codeElement.className.match(/language-([\w\d\-]+)/);
+      if (match) language = match[1];
+    }
+
+    // header
+    const header = document.createElement('div');
+    header.className = 'code-header';
+
+    const headerLeft = document.createElement('div');
+    headerLeft.className = 'code-header-left';
+    const languageSpan = document.createElement('span');
+    languageSpan.className = `code-language language-${language}`;
+    languageSpan.textContent = language.charAt(0).toUpperCase() + language.slice(1);
+    headerLeft.appendChild(languageSpan);
+
+    const headerRight = document.createElement('div');
+    headerRight.className = 'code-header-right';
     const copyButton = document.createElement('button');
-    copyButton.className = 'copy-button';
+    copyButton.className = 'code-header-button copy-button';
     copyButton.innerHTML = '<i class="fas fa-copy"></i>';
-    
-    // 添加点击事件
-    copyButton.addEventListener('click', async (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      
-      try {
-        // 保留格式化的代码
-        const formattedCode = codeBlock.innerText
-          .replace(/\u00A0/g, ' ') // 替换特殊空格
-          .replace(/\t/g, '    ')  // 替换tab为4个空格
-          .replace(/\n$/, '');     // 移除最后的空行
-        
-        await navigator.clipboard.writeText(formattedCode);
-        
-        // 复制成功反馈
+    copyButton.addEventListener('click', function() {
+      let code = '';
+      if (codeElement) code = codeElement.textContent;
+      else {
+        const pre = block.querySelector('pre');
+        if (pre) code = pre.textContent;
+      }
+      navigator.clipboard.writeText(code).then(function() {
         copyButton.innerHTML = '<i class="fas fa-check"></i>';
         copyButton.classList.add('copied');
-        
-        setTimeout(() => {
+        setTimeout(function() {
           copyButton.innerHTML = '<i class="fas fa-copy"></i>';
           copyButton.classList.remove('copied');
         }, 2000);
-      } catch (err) {
-        console.error('复制失败:', err);
-        copyButton.innerHTML = '<i class="fas fa-times"></i>';
-        setTimeout(() => {
-          copyButton.innerHTML = '<i class="fas fa-copy"></i>';
-        }, 2000);
-      }
+      });
     });
-    
-    // 确保按钮被添加到正确位置
-    if (!pre.querySelector('.copy-button')) {
-      pre.appendChild(copyButton);
+    headerRight.appendChild(copyButton);
+
+    header.appendChild(headerLeft);
+    header.appendChild(headerRight);
+
+    const pre = block.querySelector('pre');
+    if (pre) {
+      block.insertBefore(header, pre);
+    } else {
+      block.insertBefore(header, block.firstChild);
+    }
+  });
+
+  // 處理沒有 .highlight 的 <pre>
+  document.querySelectorAll('pre').forEach(function(pre) {
+    if (pre.closest('.highlight')) return;
+    if (pre.parentElement.classList.contains('code-block')) return;
+
+    // 包一層 .code-block
+    const wrapper = document.createElement('div');
+    wrapper.className = 'code-block';
+    pre.parentNode.insertBefore(wrapper, pre);
+    wrapper.appendChild(pre);
+
+    // 取得語言
+    let language = 'text';
+    const codeElement = pre.querySelector('code');
+    if (codeElement) {
+      const match = codeElement.className.match(/language-([\w\d\-]+)/);
+      if (match) language = match[1];
     }
 
-    // 添加滑动处理
-    let touchStartX = 0;
-    let touchStartY = 0;
-    
-    pre.addEventListener('touchstart', (e) => {
-      touchStartX = e.touches[0].clientX;
-      touchStartY = e.touches[0].clientY;
+    // header
+    const header = document.createElement('div');
+    header.className = 'code-header';
+
+    const headerLeft = document.createElement('div');
+    headerLeft.className = 'code-header-left';
+    const languageSpan = document.createElement('span');
+    languageSpan.className = `code-language language-${language}`;
+    languageSpan.textContent = language.charAt(0).toUpperCase() + language.slice(1);
+    headerLeft.appendChild(languageSpan);
+
+    const headerRight = document.createElement('div');
+    headerRight.className = 'code-header-right';
+    const copyButton = document.createElement('button');
+    copyButton.className = 'code-header-button copy-button';
+    copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+    copyButton.addEventListener('click', function() {
+      let code = '';
+      if (codeElement) code = codeElement.textContent;
+      else code = pre.textContent;
+      navigator.clipboard.writeText(code).then(function() {
+        copyButton.innerHTML = '<i class="fas fa-check"></i>';
+        copyButton.classList.add('copied');
+        setTimeout(function() {
+          copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+          copyButton.classList.remove('copied');
+        }, 2000);
+      });
     });
-    
-    pre.addEventListener('touchmove', (e) => {
-      const touchEndX = e.touches[0].clientX;
-      const touchEndY = e.touches[0].clientY;
-      
-      // 如果水平滑动大于垂直滑动，阻止页面滚动
-      if (Math.abs(touchEndX - touchStartX) > Math.abs(touchEndY - touchStartY)) {
-        e.preventDefault();
-      }
-    }, { passive: false });
+    headerRight.appendChild(copyButton);
+
+    header.appendChild(headerLeft);
+    header.appendChild(headerRight);
+
+    wrapper.insertBefore(header, pre);
   });
-});
+}); 

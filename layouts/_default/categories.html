@@ -10,7 +10,7 @@
         <span>CATEGORIES</span>
       </div>
       <div class="section-content">
-        {{ range $name, $taxonomy := .Site.Taxonomies.categories }}
+        {{ range $name, $taxonomy := site.Taxonomies.categories }}
           <a class="category-item" href="{{ "categories/" | relURL }}{{ $name | urlize }}">
             <i class="fas fa-folder"></i>
             <span>{{ $name }}</span>
@@ -32,7 +32,7 @@
     
     <div class="content-area">
       <div class="categories-overview">
-        {{ range $name, $taxonomy := .Site.Taxonomies.categories }}
+        {{ range $name, $taxonomy := site.Taxonomies.categories }}
           <div class="category-section">
             <div class="category-header collapsed">
               <i class="fas fa-folder"></i>

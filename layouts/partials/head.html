@@ -1,75 +1,145 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  <!-- SEO 優化 -->
   <title>{{ if .Title }}{{ .Title }} | {{ end }}{{ .Site.Title }}</title>
+  {{ if .Description }}
+    <meta name="description" content="{{ .Description | truncate 160 }}">
+  {{ else if .Summary }}
+    <meta name="description" content="{{ .Summary | plainify | truncate 160 }}">
+  {{ else }}
+    <meta name="description" content="{{ .Site.Params.description | default "一個優秀的部落格" }}">
+  {{ end }}
+  
+  <!-- 預連接重要的外部資源 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+  
+  <!-- 關鍵 CSS - 立即載入 -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
   
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
-  <!-- 添加代碼高亮樣式 -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/solarized-dark.min.css">
-  <!-- 添加highlight.js庫 -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-  <!-- 添加mermaid.js庫 -->
-  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <!-- 主要樣式 - 關鍵路徑 -->
+  {{ with resources.Get "css/main.css" }}
+    {{ $style := . | minify }}
+    <link rel="stylesheet" href="{{ $style.RelPermalink }}">
+  {{ end }}
   
-  <!-- 使用Hugo資源管道引用CSS檔案 -->
-  {{ $code := resources.Get "css/code.css" | minify }}
-  <link rel="stylesheet" href="{{ $code.RelPermalink }}">
+  {{ with resources.Get "css/vscode.css" }}
+    {{ $style := . | minify }}
+    <link rel="stylesheet" href="{{ $style.RelPermalink }}">
+  {{ end }}
   
-  {{ $codeCustom := resources.Get "css/code-custom.css" | minify }}
-  <link rel="stylesheet" href="{{ $codeCustom.RelPermalink }}">
+  {{ with resources.Get "css/post.css" }}
+    {{ $style := . | minify }}
+    <link rel="stylesheet" href="{{ $style.RelPermalink }}">
+  {{ end }}
   
-  {{ $codeLang := resources.Get "css/code-languages.css" | minify }}
-  <link rel="stylesheet" href="{{ $codeLang.RelPermalink }}">
+  <!-- 非關鍵 CSS - 延遲載入 -->
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"></noscript>
   
-  {{ $mermaid := resources.Get "css/mermaid.css" | minify }}
-  <link rel="stylesheet" href="{{ $mermaid.RelPermalink }}">
+  <!-- 代碼高亮樣式 - 延遲載入 -->
+  {{ with resources.Get "css/code-new.css" }}
+    {{ $style := . | minify }}
+    <link rel="preload" href="{{ $style.RelPermalink }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{{ $style.RelPermalink }}"></noscript>
+  {{ end }}
   
-  {{ $vscode := resources.Get "css/vscode.css" | minify }}
-  <link rel="stylesheet" href="{{ $vscode.RelPermalink }}">
+  {{ with resources.Get "css/code-languages.css" }}
+    {{ $style := . | minify }}
+    <link rel="preload" href="{{ $style.RelPermalink }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{{ $style.RelPermalink }}"></noscript>
+  {{ end }}
   
-  {{ $post := resources.Get "css/post.css" | minify }}
-  <link rel="stylesheet" href="{{ $post.RelPermalink }}">
+  <!-- 其他樣式 - 延遲載入 -->
+  {{ with resources.Get "css/elements.css" }}
+    {{ $style := . | minify }}
+    <link rel="preload" href="{{ $style.RelPermalink }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{{ $style.RelPermalink }}"></noscript>
+  {{ end }}
   
-  {{ $tag := resources.Get "css/tag.css" | minify }}
-  <link rel="stylesheet" href="{{ $tag.RelPermalink }}">
+  {{ with resources.Get "css/tag.css" }}
+    {{ $style := . | minify }}
+    <link rel="preload" href="{{ $style.RelPermalink }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{{ $style.RelPermalink }}"></noscript>
+  {{ end }}
   
-  {{ $categories := resources.Get "css/categories.css" | minify }}
-  <link rel="stylesheet" href="{{ $categories.RelPermalink }}">
+  {{ with resources.Get "css/categories.css" }}
+    {{ $style := . | minify }}
+    <link rel="preload" href="{{ $style.RelPermalink }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{{ $style.RelPermalink }}"></noscript>
+  {{ end }}
   
-  {{ $archive := resources.Get "css/archive.css" | minify }}
-  <link rel="stylesheet" href="{{ $archive.RelPermalink }}">
+  {{ with resources.Get "css/archive.css" }}
+    {{ $style := . | minify }}
+    <link rel="preload" href="{{ $style.RelPermalink }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{{ $style.RelPermalink }}"></noscript>
+  {{ end }}
   
-  {{ $search := resources.Get "css/search.css" | minify }}
-  <link rel="stylesheet" href="{{ $search.RelPermalink }}">
+  {{ with resources.Get "css/search.css" }}
+    {{ $style := . | minify }}
+    <link rel="preload" href="{{ $style.RelPermalink }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{{ $style.RelPermalink }}"></noscript>
+  {{ end }}
   
-  {{ $mobile := resources.Get "css/mobile.css" | minify }}
-  <link rel="stylesheet" href="{{ $mobile.RelPermalink }}">
+  {{ with resources.Get "css/mobile.css" }}
+    {{ $style := . | minify }}
+    <link rel="preload" href="{{ $style.RelPermalink }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{{ $style.RelPermalink }}"></noscript>
+  {{ end }}
   
-  {{ $responsive := resources.Get "css/responsive.css" | minify }}
-  <link rel="stylesheet" href="{{ $responsive.RelPermalink }}">
+  {{ with resources.Get "css/responsive.css" }}
+    {{ $style := . | minify }}
+    <link rel="preload" href="{{ $style.RelPermalink }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{{ $style.RelPermalink }}"></noscript>
+  {{ end }}
   
-  {{ $elements := resources.Get "css/elements.css" | minify }}
-  <link rel="stylesheet" href="{{ $elements.RelPermalink }}">
+  <!-- Mermaid 樣式 - 僅在需要時載入 -->
+  {{ if or .Params.mermaid (in .Content "```mermaid") }}
+    {{ with resources.Get "css/mermaid.css" }}
+      {{ $style := . | minify }}
+      <link rel="stylesheet" href="{{ $style.RelPermalink }}">
+    {{ end }}
+  {{ end }}
   
-  <!-- 確保 main.css 最後載入，其定義的變數有最高優先權 -->
-  {{ $main := resources.Get "css/main.css" | minify }}
-  <link rel="stylesheet" href="{{ $main.RelPermalink }}">
-
-  <!-- 添加 JetBrains Mono 字體 -->  
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-
-  {{ partial "custom_head.html" . }}
+  <!-- 字體優化載入 -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"></noscript>
   
-  <!-- 使用Hugo資源管道引用JS檔案 -->
+  <!-- Mermaid.js - 僅在需要時載入 -->
+  {{ if or .Params.mermaid (in .Content "```mermaid") }}
+    <script>
+      // 動態載入 Mermaid
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js';
+      script.onload = function() {
+        mermaid.initialize({ startOnLoad: true });
+      };
+      document.head.appendChild(script);
+    </script>
+  {{ end }}
+  
+  <!-- 主題切換腳本 - 內聯以避免 FOUC -->
+  <script>
+    (function() {
+      const theme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+  
+  <!-- 延遲載入 JS -->
   {{ $explorer := resources.Get "js/explorer.js" | minify }}
-  <script src="{{ $explorer.RelPermalink }}"></script>
+  <script>
+    // 延遲載入非關鍵 JS
+    window.addEventListener('load', function() {
+      const script = document.createElement('script');
+      script.src = '{{ $explorer.RelPermalink }}';
+      document.head.appendChild(script);
+    });
+  </script>
   
-  {{ $codeCopy := resources.Get "js/code-copy.js" | minify }}
-  <script src="{{ $codeCopy.RelPermalink }}"></script>
-  
-  {{ $codeEnhance := resources.Get "js/code-enhance.js" | minify }}
-  <script src="{{ $codeEnhance.RelPermalink }}"></script>
-</head> 
+  {{ partial "custom_head.html" . }}
+</head>
